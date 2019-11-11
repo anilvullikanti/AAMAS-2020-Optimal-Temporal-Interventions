@@ -1,0 +1,71 @@
+
+\noindent
+\textbf{Rounding:} 
+
+\noindent
+%- Let $X_{lt}$ be the rounded value of $x_{lt}$ for each $(l, t)$. For all constraints of type (1) if $y_{vj} \leq \frac{1}{2}$, for each $(l,t) \in P$ round $X_{lt} = 1$ with probability $4c \log{P_L} x_{lt}$, where $P_L$ is the number of nodes on the path $P \in P_{vj}$.
+Let $X_{lt}$ be the rounded value of $x_{lt}$ for each $(l, t)$. Round $X_{lt} = 1$ with probability $4c \log{P_L} x_{lt}$, where $P_L$ is the number of nodes on the path $P \in P_{vj}$.
+
+%\medskip
+%\noindent
+%- For all $(l, t)$ for which $X_{lt}$ is not rounded in the previous step, set its value to $X_{lt} = 0$. 
+
+\medskip
+\noindent
+Given a $P \in P_{vj}$, let $Z_P = \sum_{(l,t) \in P} \; X_{lt}$. We will first show that the probability that the constraint 1 will be satisfied is large.
+\begin{claim}
+Assume $c = \frac{1}{\epsilon^2}$, where $\epsilon > 0$. For the rounded solution $X_{lt}$ and for each $P \in P_{vj}$ and $y_{vj} \leq \frac{1}{2}$,
+\begin{equation*}
+ Pr(Z_P \geq (1-\epsilon) E[Z_P]) \geq 1 - \frac{1}{P_L}    
+\end{equation*}
+\end{claim}
+\begin{proof}
+The expected value of $Z_P$ is given by
+\begin{eqnarray*}
+    \centering
+    E[Z_P]  &=& E[\sum_{(l,t) \in P} X_{lt}] =  \sum_{(l,t) \in P} E[X_{lt}] \\
+          &=& 4c\log P_L  \sum_{(l,t) \in P} x_{lt} \\
+          &>& 2c\log P_L \; (from \; rounding \; and \; Constraint \; 1) \\
+\end{eqnarray*}
+Therefore, $E[Z_P] > 2c\log P_L$.
+
+
+\medskip
+\noindent
+By Chernoff bound and for any $\epsilon > 0$,
+\begin{eqnarray*}
+   Pr(Z_P < (1-\epsilon) E[Z_P]) & \leq & \exp\bigg(- \frac{E[Z_P] \; \epsilon^2}{2}\bigg) 
+    \leq  \exp\bigg(-\frac{2c\log P_L \; \epsilon^2}{2}\bigg) \\
+   & \leq & \exp(- c\log P_L \epsilon^2) \\
+   & \leq &  \frac{1}{P_L} \enspace \; (\because \;  c = \frac{1}{\epsilon^2})
+\end{eqnarray*}
+Therefore, $Pr(Z_P \geq (1-\epsilon) E[Z_P]) \geq 1 - \frac{1}{P_L}$
+\end{proof}
+
+\noindent
+%If the rounding of $X_{lt}$ is done with Prob. $4c \log m x_{lt}$, the analysis of claim 1 ones still goes through giving a probability at least $1 - \frac{1}{m}$. The advantage of this would be that the probability does not depend on the number of locations on the path $P$.
+
+\medskip
+\noindent
+Now, we will show that the rounded solution violates the budget constraint by at most $O(\log P_L)$ factor of $B_t$ with probability $\geq \frac{1}{2}$.
+
+\noindent
+\begin{claim}
+Let $W = \sum_{(l,t)} X_{lt}$. Then for any $t \in \{1,\ldots,T_{max}\}$ the rounded solution satisfies
+\begin{equation}
+    Pr(W <  8c \log P_L B_t) \geq \frac{1}{2}
+\end{equation}
+\end{claim}
+\begin{proof}
+\begin{eqnarray*}
+  E[\sum_{(l,t)} X_{lt}] &= & \sum_{(l,t)} E[X_{(l,t)}] \\
+  & = & \sum_{(l,t)} 4c \log P_L x_{lt} =  4c \log P_L \sum_{(l,t)} \; x_{lt} \\
+  & \leq & (4c\log P_L) \; B_t \enspace \; (from \; constraint \; 2) \\
+\end{eqnarray*}
+From Markov's inequality,
+\begin{eqnarray*}
+    Pr(W \geq 8c\log P_L B_t) &\leq& \frac{E[W]}{8c \log P_L B_t} \\ 
+    & \leq & \frac{1}{2}
+\end{eqnarray*}
+Therefore, $Pr(W < 8c\log P_L B_t) \geq \frac{1}{2}$.
+\end{proof}

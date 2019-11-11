@@ -1,0 +1,13 @@
+\section{Related work}
+\label{sec:related}
+
+Public health policy analysis relies heavily on mathematical models of SIR type processes, e.g., \cite{lofgren:pnas14,anderson+m:book}. As discussed earlier, there are two broad classes of models. The first involves using a system of coupled differential equations to represent the dynamics, e.g., \cite{medlock:science09,AAAI1816714,venkataramanan:ichi17}. These do not have any closed form solutions, in general, and when the system is not very large, it can be solved by brute force local search methods \cite{medlock:science09}. For some types of models, greedy strategies have been used \cite{AAAI1816714,venkataramanan:ichi17}. 
+The second is network based, and uses a stochastic diffusion model for the spread of the disease \cite{marathe:cacm13,halloran:pnas08,lofgren:pnas14,eubank:nature04,gk06}. Such models have been found to be more powerful and useful for epidemic spread on large heterogeneous populations, where the complete mixing assumptions of differential equation models are not valid.
+
+During any large outbreak, public health agencies solve a variety of models, and make plans and guidelines based on the results,
+e.g., during the 2009 swine flu \cite{medlock:science09}, and
+the 2014 Ebola outbreak \cite{lofgren:pnas14}. Such studies typically explore the space of different possible interventions, within given resource constraints. Therefore, there is a lot of interest in the design of optimal or near-optimal interventions.
+
+There has been a lot of work on optimizing vaccine allocation. A lot of it has been based on the idea of picking nodes to vaccinate, based on their eigenscore, i.e., their component values in the first eigenvector \cite{PreciadoVM13_2,PreciadoVM13,PreciadoVM14,SahaSDM15,Ogura2017,zhang2015controlling,YaoSDM2014}. It is not clear how to incorporate temporal constraints and delay and information within such formulations. In particular, these results do not incorporate the effects of where the sources are, and instead try to shift the phase transition for a large outbreak, which is in terms of the spectral radius. As we have discussed, such static interventions don't do very well.
+
+

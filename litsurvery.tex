@@ -1,0 +1,107 @@
+\section{Literature Survey}
+In this section, the papers related to controlling epidemics using various techniques are discussed.
+
+\begin{enumerate}
+\item \textbf{Optimal Resource Allocation for Network Protection Against Spreading Processes.} 
+\cite{PreciadoVM14}
+
+\smallskip
+\noindent
+Given an arbitrary directed network. Consider two types of protection resources to contain spreading processes: (i) preventive (eg. vaccination), and (ii) corrective (eg. antidotes). Each resource has an associated cost.
+
+\smallskip
+\noindent
+\underline{Model}: The HeNeSIS (Heterogeneous Networked SIS Model) described is a continuous-time Networked Markov process with two states for any node: Susceptible and Infected. The model used in this paper is a mean-field approximation of its dynamics.
+
+\smallskip
+\noindent
+\underline{Problem 1}: Given a fixed budget, find the optimal allocation of resources in the network to achieve the maximum containment.
+
+\medskip
+\noindent
+\underline{Problem 2}: Find the maximum budget required to control the spreading process.
+
+\smallskip
+\noindent
+\underline{Techniques}: Geometric Programming (GP).
+
+\smallskip
+\noindent
+\underline{Results}: Both the problems can be solved in polynomial-time using GP for arbitrary directed graph of non-identical nodes and various cost functions.
+
+\item \textbf{Optimal Vaccine Allocation to Control Epidemic Outbreaks in Arbitrary Networks.} \cite{PreciadoVM13}
+
+\smallskip
+\noindent
+Given an arbitrary contact network and some vaccination resources. 
+
+\smallskip
+\noindent
+\underline{Model}: Networked version of SIS epidemic. The problem of controlling the spread of epidemic can be formulated as a spectral condition involving eigen values of a matrix base on the network structure.
+
+\smallskip
+\noindent
+\underline{Problem}: Finding the optimal allocation of vaccinations throughout the network to control the spread of the outbreak.
+
+\smallskip
+\noindent
+\underline{Methods}: A convex framework to find the cost-optimal distribution of vaccines.
+
+\smallskip
+\noindent
+\underline{Results}: Numerical simulations in a real social network.
+
+3. Application of MCF-SIS in two domains: (i) TB spread in India and (ii) Gonorrhea in the US. DOMO averts about 8000 person per years of TB and 20000 person-years of gonorrhea in comparison to the current policy.
+
+\medskip
+\noindent
+3. \textbf{A Convex Framework to Control Spreading Processes in Directed Networks.} \cite{PreciadoVM13_2}
+
+\smallskip
+\noindent
+Given a contact network. Assume a HeNiSIS model in a network with non-identical nodes and directed edges. Given, three types of protection resources: (i) edge-control (eg. restriction on contact rate across directed edges, (ii) preventative (eg. vaccines), and (iii) corrective (eg. antidotes). Assume cost is associated with each resource and there is a limited budget.
+
+\smallskip
+\noindent
+\underline{Problem}: Given a weighted directed graph, a set of cost functions for the protection resources, bounds on the infection, recovery, and edge rates, a total budget: \textit{find the cost-optimal allocation of protection resources to maximize the containment of infection.}
+
+\smallskip
+\noindent
+\underline{Results}: A polynomial time algorithm to the problem using Geometric Programming for arbitrary weighted and directed contact network.
+
+\medskip
+\noindent
+4. \textbf{Preventing Infectious Disease in Dynamic Populations Under Uncertainty.} \cite{AAAI1816714}
+
+Treatable long-term infectious diseases are a critical challenge for public health. Outreach campaigns targeted carefully at demographic groups in population might help prevent the disease spread. This problem becomes more challenging when we account for the uncertainty in the data. 
+
+\smallskip
+\noindent
+\underline{Contributions}:
+
+1. The authors present the MCF-SIS (Multiagent Continuous Flow-SIS) model where the disease spreads in a multiagent system with birth, death, and movement. The population stratified across age groups. This introduces a problem in multiagent systems: \textit{Compute the optimal resource allocation under MCF-SIS model, where outreach campaign must decide on how to distribute the limited resources between the groups.} This introduces a continous, nonconvex, highly nonlinear optimization problem that cannot be solved using existing methods. A stochastic setting is also considered where contact pattersna dn the number of infected agents in each group are drawn from a distribution.
+
+\smallskip
+\noindent
+2. The optimal allocation problem in MCF-SIS is shown to be a \textit{continuous submodular} problem. Intuitively, this means that infections that are averted by spending one unit of treatment resources can no longer be averted by additional spending, creating diminishing returns.
+
+\smallskip
+\noindent
+3. An algorithm DOMO (Disease Outreach via Multiagent Optimization) that obtains $(1- \frac{1}{e})$-approximation for the optimal allocation problem.
+
+\smallskip
+\noindent
+
+
+\end{enumerate}
+
+
+
+
+\newpage
+List:
+
+Stochastic epidemic metapopulation models on networks: SIS dynamics and control strategies.
+
+Krause AL1, Kurowski L1, Yawar K1, Van Gorder RA2.
+

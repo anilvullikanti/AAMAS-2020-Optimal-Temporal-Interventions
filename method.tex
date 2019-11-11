@@ -1,0 +1,232 @@
+
+\section{Our approach}
+\label{sec:method}
+
+Our algorithm \algo{} uses a linear programming rounding technique, combined with the sample average approximation
+technique from stochastic optimization. We then show that this can be significantly speeded up by a more compact LP.
+
+\subsection{Algorithm \algo{}}
+
+We start with some definitions needed for the algorithm. Let $H_j=(V, E_j)$ denote a random subgraph of $G$,
+where each edge $e\in E$ is selected to be in $E_j$ with probability $p$. 
+Let $\src^{(j)}$ denote the set of source nodes in $H_j$, and
+let $\mathcal{P}_{vj}$ be the set of paths from sources to $v$ in $H_j$. 
+Let $N_{vj} = |\mathcal{P}_{vj}|$ be the number of paths from any source to $v$ in $H_j$. 
+Let $N = max_{(v,j)}  N_{vj}$ be the maximum number of paths from sources to a node in any of the sampled
+graphs. Let $y_{vj}$ denote the indicator variable to check whether node $v$ is reachable from any source in $H_j$.
+As defined earlier, $x_{vt}$ is the indicator that node $v$ is vaccinated at time $t$.
+
+Algorithm \algo{} involves the following steps.
+\begin{enumerate}
+\item
+Construct sampled graphs $H_j$, for $j=1,\ldots,H_M$, and a set of sources $\ssrc(H_j)$ by sampling from $\src$
+\item
+Run breadth first search (BFS) in each $H_j$ from the nodes in $\ssrc(H_j)$.
+Let $V_{j,t}$ denote the set of all nodes at level $t$ in the BFS tree in $H_j$ 
+(with the nodes in $\ssrc(H_j)$ at level $0$); let $V_{j,\geq t}=\cup_{t'\geq t} V_{j,t}$ denote
+the set of all nodes at level $t$ or more.
+\item
+Solve the following linear program (LP), as described in Lemma \ref{lemma:ellipsoid}
+\begin{eqnarray}
+\label{eqn:obj}
+\min \frac{1}{M}\sum_{v, j} y_{vj}  && \text{s.t.}\\
+\label{eqn:hit-paths}
+\forall v, j, \forall P \in \mathcal{P}_{vj}:\  \sum_{u,t: u\in P\cap V_{j,\geq t}} x_{ut} &\geq& 1 - y_{vj}\\
+\label{eqn:Bt}
+\forall t:\ \sum_{v} \; x_{vt} &\leq& B_t\\
+\mbox{All variables} &\in& [0, 1]
+\end{eqnarray}
+\item
+Let $x, y$ be the optimal fractional solution to (LP).
+We round it to an integral solution in the following manner
+\begin{enumerate}
+\item
+Round $Y_{vj} = 1$ for each $(v,j)$ if $y_{vj} \geq \frac{1}{2}$, otherwise set $Y_{vj} = 0$.
+\item
+For each $v, t$, set $X_{vt}=1$ with probability $\min\{1, 2 x_{vt}\log(4nMN)\}$. 
+\item
+$X_t=\{v: X_{vt}=1\}$ is the set of nodes vaccinated at time $t$, and $X=\cup_t X_t$
+is the total set of vaccinated nodes.
+\end{enumerate}
+\end{enumerate}
+
+Though (LP) has exponentially many constraints (one for each path), it turns out, (LP) can be solved
+in polynomial time, as we discuss below.
+\begin{lemma}
+\label{lemma:ellipsoid}
+The linear program (LP) can be solved in polynomial time.
+\end{lemma}
+
+\begin{lemma}
+\label{lem:disconnect}
+For any $H_j$, and any node $v$, if $y_{vj} < \frac{1}{2}$, then,
+$\Pr[\mbox{$v$ is reachable from $\ssrc(H_j)$ in $H_j[V-\X]$}] < \frac{1}{4nM}$,
+where $H_j[V-\X]$ is the graph induced by removing the nodes in $\X$ from $H_j$.
+\end{lemma}
+\begin{proof}
+Let $\mathcal{P}_{vj} = \{P_1, \ldots,P_L\}$ be the  set of paths to node $(v,j)$. 
+For a path $P$, let $S(P)=\{(u, t): u\in P\cap V_{it}\}$.
+If there exists $(u, t)\in S(P)$ with $2 x_{vt} \log(4nMN) \geq 1$, the rounding ensures that $X_{ut}=1$;
+therefore, we only consider the case $2 x_{vt} \log(4nMN)\leq 1$.
+Our rounding ensures that we have $\Pr[X_{ut}=1] \geq 2 x_{vt} \log(4nMN)$, so that
+$\Pr[\sum_{u, t: u\in P\cap V_{it}} X_{ut} = 0]$ is upper bounded by
+$\prod_{(u,t) \in S(P)} \big(1- 2 x_{ut} \log(4nMN)\big) \leq e^{-\sum_{(u, t)\in S(P)} 2 x_{ut} \log(4nMN)}
+\leq e^{-\log(4nMN)}= \frac{1}{4nMN}$,
+since $\sum_{(u, t)\in S(P)} x_{ut} \geq 1-y_{vj} \geq 1/2$.
+Equivalently, the probability that no node from $S(P)$ is picked from $P$ is at most $\frac{1}{4nMN}$;
+here we say a node is picked from $S(P)$ if $X_{u,t}=1$ for some $(u, t)\in S(P)$.
+By a union bound, the probability that there exists a path $P_i$ such that no node from
+$S(P_i)$ is picked is at most $\frac{L}{4nMN}\leq \frac{1}{4nM}$.
+Finally, $v$ is reachable from $\ssrc(H_j)$ in $H_j[V-\X]$ if and only if there exists a path $P_i$ such that no node from
+$S(P_i)$ is picked, and so the lemma follows.
+\end{proof}
+
+Next, we bound the violation in the budget constraints. We use the following Chernoff tail bound.
+
+\begin{theorem} (Theorem 1.1 of \cite{books/daglib/0025902}
+Let $Z=\sum_{i=1}^n Z_i$, where $Z_i$ are independently distributed random variables in $[0, 1]$. Then, for any $\epsilon\in(0, 1)$, we have
+$\Pr[Z\not\in[(1-\epsilon)E[Z], (1+\epsilon)E[Z]]]\leq 2 exp(-\epsilon^2 E[Z]/3)$
+
+
+\end{theorem}
+
+\noindent
+\begin{lemma}
+\label{lem:budget}
+With probability at least $1-1/n$, for each $t\in \mathcal{T}$, we have
+$|X_t|\leq 4\log(4nMN)B_t$.
+\end{lemma}
+\begin{proof}
+We have $E[\sum_u X_{ut}]\leq \sum_u 2x_{ut}\log(4nMN) \leq 2\log(4nMN)B_t$.
+The $X_{ut}$'s are all rounded independently, and so we can apply the Chernoff bound on the sum, which gives
+$\Pr[\sum_u X_{ut} > 4\log(4nMN)B_t] \leq exp(-2\log(4nMN)B_t) \leq exp(-2\log(4nMN))= \frac{1}{(4nMN)^2}\leq \frac{1}{16n^2}$.
+The number of possible time steps in $\mathcal{T}$ is at most $n$, which implies that the probability that there exists 
+$t\in\mathcal{T}$ such that $\sum_u X_{ut} > 4\log(4nMN)B_t$ is at most $n\frac{1}{16n^2}=\frac{1}{16n}\leq 1/n$.
+\end{proof}
+
+For a vaccination set $U$, let $Z_j(U)$ be the number of nodes in 
+$H_j-U$, which are still reachable from $\ssrc(H_j)$;
+note that this includes the sources themselves.
+Let $Z(U)=\frac{1}{M}\sum_j Z_j(U)$, and let $\hat{X}_{opt}=\mbox{argmin}_{X'}Z(X')$ be the solution that
+achieves the minimum average number of infections in the samples.
+Finally, let $X_{opt}=\mbox{argmin}_{X'}\expinf(X')$ be the optimal solution to the $\prob{}$ instance,
+
+\begin{lemma}
+\label{lemma:conc}
+Let $Z(\cdot)$ be as defined above. If $M\geq 48n\log{n}$, with probability at least $1-1/n$, for every intervention set $U$,
+we have $Z(U)\in [\frac{1}{2}\expinf(U), \frac{3}{2}\expinf(U)]$.
+\end{lemma}
+\begin{proof}
+By definition, $Z(U)=\frac{1}{M}\sum_j Z_j(U)$.
+We have $E[Z(U)] = E[Z_j(U)]=\expinf(U)$ for all $j$.
+By the Chernoff bound, we have
+\[
+\Pr[MZ(U)\not\in [\frac{1}{2}, \frac{3}{2}]M\expinf(U)]\leq 2exp(-\frac{M}{24}\expinf(U))
+\]
+We have $\expinf(U)\geq 1$, since there is always at least one infection.
+For $M=48n\log{n}$, this probability is at most $2e^{-2n\log{n}} = \frac{2}{e^2e^nn}$.
+The number of possible intervention sets is the number of possible sets $U_t\subseteq V$, $t\in\mathcal{T}$,
+which is at most $n2^n$.
+Therefore, the probability that there exists an intervention set $U$ for which
+$Z(U)\not\in [\frac{1}{2}, \frac{3}{2}]\expinf(U)$ is at most $n2^n\cdot \frac{2}{e^2e^nn}\leq \frac{1}{n}$.
+\end{proof}
+
+\begin{theorem}
+\label{theorem:algo}
+Let $X$ denote the vaccination set computed by algorithm \algo{}.
+Then, with probability at least $1/2$, we have
+$\expinf(X)\leq 6\expinf(X_{opt})$, and for all $t\in\mathcal{T}$, we have
+$|X_t|\leq 4\log(4nMN)B_t$.
+\end{theorem}
+\begin{proof}
+Let $\hat{X}_{opt}$ be as defined above. 
+By Lemma \ref{lem:disconnect}, for any $v, j$, if $y_{vj} \leq 1/2$, the probability that node $v$ is
+reachable from $\ssrc(H_j)$ is at most $\frac{1}{4nM}$.
+By a union bound, the probability this does not hold for any $v$ (for a fixed $j$) is at most $\frac{1}{4M}$.
+This implies that with probability at least $1-\frac{1}{4nM}$, 
+\[
+Z_j(X)\leq |\{v: y_{vj}\geq 1/2\}|\leq \sum_{v: y_{vj}\geq 1/2} 2y_{vj} \leq \sum_v 2y_{vj}
+\]
+By a union bound, with probability at least $1-\frac{M}{4M}=1-\frac{1}{4}$,
+we have $Z_j(X)\leq 2\sum_v y_{vj}$, for all $j$.
+By definition of $\hat{X}_{opt}$, we have $\frac{1}{M}\sum_j Z_j(X)\leq \frac{1}{M}\sum_{v,j} 2y_{vj} \leq 2Z(\hat{X}_{opt})$,
+since the LP solution is also a lower bound on $Z(\hat{X}_{opt})$.
+By Lemma \ref{lem:budget}, and a union bound, the condition $|X_t|\leq 4\log(4nMN)B_t$ holds for all $t$,
+in addition to $Z(X)\leq 2Z(\hat{X}_{opt})\leq 2Z(X_{opt})$, with probability at least $1-\frac{1}{4}-\frac{1}{n}$,
+since $Z(\hat{X}_{opt})\leq Z(X_{opt})$, by definition of $\hat{X}_{opt}$.
+
+By Lemma \ref{lemma:conc}, with probability at least $1-\frac{1}{n}$,
+we have $Z(X_{opt})\leq \frac{3}{2}\expinf(X_{opt})$, and
+$\frac{1}{2}\expinf(X)\leq Z(X)$. This gives us
+\[
+\expinf(X)\leq 2Z(X)\leq 4Z(X_{opt})\leq 6\expinf(X_{opt})
+\]
+Therefore, all the conditions of the theorem hold with probability $\geq 1-\frac{1}{4}-\frac{2}{n}\geq \frac{1}{2}$.
+\end{proof}
+
+
+\subsection{Speeding up \algo{}}
+
+The main bottleneck in \algo{} is the solution of the LP, which has exponentially many constraints.
+Though it can be solved in polynomial time using Lemma \ref{lemma:ellipsoid}, and in sample graphs $H_j$,
+the number of paths is limited, this is still very slow.
+Here, we show how the LP can be written more compactly.
+
+\begin{eqnarray*}
+(LP_c) \min \frac{1}{M}\sum_j \sum_v y_{vj} &&\\
+\forall u\in V_{j,\geq t}, v, v'\in N_{H_j}(u):\ x_{ut} + y_{uj} &\geq& y_{vj} - y_{v'j}\\
+\forall u\in V_{j,\geq t}, v, v'\in N_{H_j}(u):\ x_{ut} + y_{uj} &\geq& y_{v'j} - y_{vj}\\
+\forall j:\ y_{s,j} &=& 1\\
+\forall t\in\mathcal{T}:\ \sum_v x_{vt} &\leq& B_t\\
+\end{eqnarray*}
+
+\begin{lemma}
+\label{lemma:alt-LP}
+The above $(LP_c)$ is equivalent to the path based linear program (LP).
+\end{lemma}
+
+The remaining steps of \algo{}, starting from the solution to the above LP are the same.\\
+
+\noindent
+\textbf{Linear Program 1} $LP$
+\begin{eqnarray*}
+\centering
+(LP_c) \min \frac{1}{M}\sum_j \sum_v y_{vj} &&\\
+\forall j, \forall s \in src(H_j):\ y_{sj} &\geq& 1\\
+\forall u \in V_{j, \geq t}, \forall t:\ y_{uj} &\leq& 1 - x_{ut} \\
+\forall v, j, \forall P \in \mathcal{P}_{vj}: \sum_{u,t: u\in P\cap V_{j,\geq t}} x_{ut} &\geq& 1 - y_{vj}\\
+\forall t\in\mathcal{T}:\ \sum_u x_{ut} &\leq& B_t\\
+all \; variables \in [0,1]
+\end{eqnarray*}
+
+\noindent
+\textbf{Linear Program 2}  $(LP_c)$
+\begin{eqnarray*}
+\centering
+(LP_c) \min \frac{1}{M}\sum_j \sum_v y_{vj} &&\\
+\forall j, \forall s \in src(H_j):\ y_{sj} &\geq& 1\\
+\forall u \in V_{j, \geq t}, \forall t:\ y_{uj} &\leq& 1 - x_{ut} \\
+\forall j, \forall u, \; (w, u): y_{uj} &\geq& y_{wj} - \sum_{t: u \in V_{j, \geq t}} x_{ut}\\
+\forall t\in\mathcal{T}:\ \sum_u x_{ut} &\leq& B_t\\
+all \; variables \in [0,1]
+\end{eqnarray*}
+
+\subsection{Algorithm \algodelay{}}
+We now sketch algorithm \algodelay{} for the problem \probdelay{}. Recall the definition of the set $\info=\{I_t: t\leq T-\tau$.
+\begin{enumerate}
+\item 
+We set the nodes in sets $\cup_{t'<T-\tau} I_{t'}$ to be in recovered state, and those in $I_{T-\tau}$ as the source of infections (instead of the source distribution $\src$ used in \prob{})
+\item
+Generate sampled graphs $H_j$, for $j=1,\ldots,H_M$, with $\ssrc(H_j)=I_{T-\tau}$. 
+\item 
+Run the remaining steps 3 and 4 of \algo{} with $\mathcal{T}=\{\tau\}$
+\end{enumerate}
+
+We get a similar guarantee for \algodelay{}.
+\begin{theorem}
+\label{theorem:algodelay}
+Let $X_T$ denote the vaccination set computed by algorithm \algodelay{}.
+Then, with probability at least $1/2$, we have
+$\expinf(X_T)\leq 6\expinf(X_{opt})$, and 
+$|X_T|\leq 4\log(4nMN)B_T$.
+\end{theorem}
