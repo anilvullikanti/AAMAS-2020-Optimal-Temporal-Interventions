@@ -145,8 +145,14 @@
 \begin{abstract}  % put your abstract here!
 Vaccination is a standard public health intervention for controlling the spread of epidemics. However, there is typically limited supply of vaccines, and therefore, their deployment needs to be optimized. Further, vaccines are produced over time, so the strategies have to be temporal. We study the problem \prob{} of designing temporal vaccination strategies, within available budget constraints, to minimize the spread of an outbreak, and with delay in information of the epidemic state.
 
-This is a challenging stochastic optimization problem.  We design rigorous approximation algorithms using a linear programming rounding approach, along with the sample average approximation technique. We find that the solution structure changes with the intervention time.
-We also observe that there is a time window, usually till the peak, up to which there is benefit in delaying the vaccination.
+This is a challenging stochastic optimization problem. 
+We design the first algorithm with a rigorous approximation guarantee for this problem.
+Our main technique is a combination of linear programming based rounding, along with the 
+sample average approximation technique. With additional pruning techniques, we are able to scale
+our algorithm to networks with millions of nodes.
+We find the approximation factor is significantly better than the worst case bound,
+and, in practice, is a small constant factor. Further, our method shows significantly better performance
+than all prior heuristics for this problem.
 \end{abstract}
 
 
