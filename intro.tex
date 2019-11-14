@@ -4,78 +4,58 @@
 Vaccination and social distancing are the primary strategies for controlling the spread of epidemic outbreaks
 \cite{medlock:science09,Ogura2017,halloran:pnas08,lofgren:pnas14,zhang2015controlling,YaoSDM2014,AAAI1816714,PreciadoVM13_2,PreciadoVM13,PreciadoVM14,Aspnes:2005}.
 The production of vaccines is expensive and time intensive, and so there is always a shortage of
-vaccine supply \cite{cdc:temporal}. As a result, there is a lot of interest in designing optimal interventions,
-in the area of public health policy planning. This is especially true in cases where the outbreaks spread
-really fast, e.g., the 2009 swine flu outbreak \cite{medlock:science09}. 
-A standard step in the planning cycle of public health agencies is to evaluate the efficacy of different
-intervention strategies, under the available resource constraints \cite{halloran:pnas08,lofgren:pnas14}.
-Therefore, finding optimal interventions to control epidemic outbreaks are important inputs to
-public health policy planning.
-
-Epidemic spread is typically viewed as a SIR process (defined later), which can be
-modeled as system of differential equations \cite{medlock:science09,AAAI1816714,venkataramanan:ichi17}, or as stochastic
-diffusion processes on social contact networks, e.g., \cite{marathe:cacm13}.
+vaccine supply \cite{cdc:temporal}. As a result, there is a lot of interest in evaluating different kinds of
+interventions \cite{halloran:pnas08,lofgren:pnas14}, and finding optimal interventions \cite{medlock:science09}.
+The spread of epidemics is very complex, and SIR type diffusion processes (and variations) are commonly used:
+Informally, each infected individual $u$ (in state I) spreads the infection to each susceptible neighbor $v$ 
+(in state S) with probability $p(u, v)$; this is defined formally in Section \ref{sec:prelim}.
+These can be modeled as system of differential equations \cite{medlock:science09,AAAI1816714,venkataramanan:ichi17}, or as stochastic
+agent based models on social contact networks, e.g., \cite{marathe:cacm13}.
 Differential equation models are small enough that they can be solved optimally by simple brute-force
 local search methods \cite{medlock:science09}.
-However, network based models cannot be easily optimized this way---optimal vaccination is an NP-hard problem.
-All prior work on designing interventions in network models has been focused on restricted epidemic models, e.g., SI or SIS \cite{Aspnes:2005,PreciadoVM13_2,PreciadoVM13,PreciadoVM14,SahaSDM15,Ogura2017},
-or to static interventions, which are not optimized over time, e.g., \cite{zhang2015controlling,YaoSDM2014}. 
-The problem of finding temporal vaccination strategies for epidemic control in stochastic SIR models on networks remains an open problem. An important issue associated with such problems is the information about the outbreak which is available, and the delay in getting this information.
 
-
-% An important challenge in the design of interventions is the uncertainty about where the outbreak is going on,
-% especially in the initial stages. There is a trade-off between planning the intervention at the start of the
-% outbreak (when no information is available), and waiting for some time (when some partial information might
-% be available). This becomes a challenging stochastic optimization problem, and there has been no work on
-% understanding how much of delay is useful, and how to incorporate it into the planning process.
-
-
-%
-%\noindent
-%\textbf{Questions.}
-%\begin{itemize}
-%\item 
-%If the vaccination supply is only available over time (i.e., not all at time $t=0$), how should the interventions be designed over time, so that the number of infections is minimized, with a given budget for each time step.
-%\item
-%For what types of nodes are we better of prioritizing early vaccination? Are there useful surrogates for such nodes?
-%\item
-%Adaptive interventions: suppose we have limited information available initially (e.g., a prior distribution on the source), but have information on the outbreak after time $T$. What are good interventions in such a two-stage setting?
-%Under what conditions does it help to wait?
-%\end{itemize}
-%
-%We study the problem \prob{} of minimizing the resources used to contain the outbreak by selecting subsets of nodes to vaccinate at different times.
+However, network and agent based models cannot be easily optimized this way. 
+In this paper, we study problem \prob{} of designing temporal vaccination strategies to minimize
+the expected outbreak size in an SIR epidemic process on a network $G=(V, E)$.
+There is a lot of relevant prior work on this topic, and can be split along the following lines
+(we only consider work restricted to network models):
+(1) Optimization in the SI/SIS type models, in static ot dynamic networks, e.g.,
+\cite{PreciadoVM13_2,PreciadoVM13,PreciadoVM14,SahaSDM15,Ogura2017}. Much of this work is based on
+controlling spectral properties, but does not give any guaranteed bounds on the expected outbreak size;
+(2) Static interventions in SIR models, e.g., \cite{zhang2015controlling,YaoSDM2014}, which also do not
+directly bound the expected outbreak size,
+(3) SI model with transmission probability 1 \cite{Aspnes:2005}, which does not translate to results for
+the SIR model with lower transmission probability;
+(4) Heuristics for picking nodes based on degree or centrality, e.g., \cite{havlin},
+which work for all models but give no guarantees.
+In summary, none of the prior results give rigorous results for \prob{}, which remains an open problem.
 
 \noindent
 \textbf{Our results.}
-In this paper, we study problem \prob{}, which involves designing temporal vaccination strategies to control
-the spread of an SIR epidemic process on a network $G=(V, E)$.
+\emph{We present the first approximation algorithm for \prob{} with rigorous guarantees.}
 Our specific contributions are described below.
 \begin{itemize}
 \item
-% We show that \prob{}  is NP-hard to approximate within an $O(\log{n})$ factor, where $n$ is the number of nodes.
 We design algorithm \algo{} for selecting the sets of nodes to vaccinate at different times,
 within a given set of temporal budget constraints. We show a rigorous worst case approximation guarantee on
 the performance of \algo{}, which is logarithmic in the number of paths in sampled subgraphs of $G$;
-however, in practice, we find the approximation ratio is a constant.
-\algo{} uses a linear programming (LP) rounding approach, along with the sample average technique. 
-We design a different LP, which is much more compact (with linear number of constraints), leading to 
-significantly improved runtime. Finally, we design \algodelay{} for the problem where information about the outbreak is available with some delay.
-\emph{Our algorithms are the first rigorous results on temporal vaccination in the general
-stochastic SIR model on networks}.
-% We develop a rigorous algorithmic approach for vaccine allocation over time,
-% and use our tools to understand the interplay between delay and information availability.
+this is typically significantly smaller than the number of paths in $G$, so that
+in practice, \algo{} has a much smaller approximation ratio.
+Our main technical ideas are rounding a linear programming (LP) relaxation, along with the sample average technique.
 \item
-In order to study the interplay between delay and information, we formalize the \probdelay{} problem, which incorporates a delay $\tau$, with which information about the outbreak becomes available.
-We show that \algo{} can be adapted to give the same guarantees for this version also.
+We augment \algo{} with a sparsification step, which significantly reduces the size of the LP, and
+is able to scale to networks with millions of nodes and edges.
 \item 
 We evaluate our algorithms on diverse real and random networks.
-We show that \algo{} has an approximation ratio very close to $1$, significantly better than the worst case guarantee we prove rigorously. It also outperforms a degree based baseline, which is one of the standard methods. Next, we study \prob{} with two stages. We find the performance degrades rapidly with the time at which the intervention is performed. Further, the intervention sets at the two stages have differences.
-Finally, we study the effect of the delay $\tau$, and the time $T$ at which the intervention is done. When $T$ is small, it always pays to wait for the delayed information. However, after a point (when $T$ is close to the peak), the value of information diminishes, and it just the same as doing the intervention at time $0$.
+We show that \algo{} has an approximation ratio very close to $1$, significantly better than the worst case guarantee we prove rigorously. 
+We find that \algo{} outperforms two of the most commonly used baselines for intervention design.
+We also examine the structure of solutions, and find significant differences in the characteristics of nodes
+picked in different stages.
 \end{itemize}
 
 \noindent
 \textbf{Public health impact.}
-At the start of every flu outbreak, and during major pandemics, there is a lot of interest from the CDC and other public health agencies on finding optimal solutions in different models, e.g., \cite{medlock:science09,halloran:pnas08,lofgren:pnas14,venkataramanan:ichi17}. These can be used to guide policies when there are shortages, including the logistics of where vaccines should be deployed \cite{venkataramanan:ichi17}. Our methods help designing optimal policies using agent based models, which have been found to be more useful in planning for large outbreaks, e.g., \cite{halloran:pnas08,lofgren:pnas14,eubank:nature04,gk06}.
+At the start of every flu outbreak, and during major pandemics, there is a lot of interest from the CDC and other public health agencies on finding optimal solutions in different models, e.g., \cite{medlock:science09,halloran:pnas08,lofgren:pnas14,venkataramanan:ichi17}. These can be used to guide policies when there are shortages, including the logistics of where vaccines should be deployed \cite{venkataramanan:ichi17}. Our methods help designing near-optimal policies using agent based models, which have been found to be more useful in planning for large outbreaks, e.g., \cite{halloran:pnas08,lofgren:pnas14,eubank:nature04,gk06}.
 
-In most diseases, e.g. flu, the final policies have to be \emph{implementable}. This is ill-defined, but one characteristic is that the interventions should not target specific individuals, but could be defined by broader categories, e.g., age (as in the CDC guidelines). In such a case, the solution from a method like ours will not translate into an implementable policy. However, our algorithms can be used for a group level intervention design problem, as in \cite{zhang2015controlling}, which would give more implementable solutions.
+%%%In most diseases, e.g. flu, the final policies have to be \emph{implementable}. This is ill-defined, but one characteristic is that the interventions should not target specific individuals, but could be defined by broader categories, e.g., age (as in the CDC guidelines). In such a case, the solution from a method like ours will not translate into an implementable policy. However, our algorithms can be used for a group level intervention design problem, as in \cite{zhang2015controlling}, which would give more implementable solutions.
 
