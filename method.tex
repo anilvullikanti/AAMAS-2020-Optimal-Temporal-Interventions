@@ -41,7 +41,7 @@ Solve the following linear program ($LP_{saa}$)
 \label{eqn:xy}
 \forall u \in V_{j, \geq t} - \ssrc(H_j), \forall t:\ y_{uj} &\leq& 1 - x_{ut} \\
 \label{eqn:xy2}
-\forall u \in \ssrc(H_j), \forall t:\ y_{uj} &\leq& 1 - x_{u0} \\
+\forall u \in \ssrc(H_j):\ y_{uj} &\leq& 1 - x_{u0} \\
 \label{eqn1}
 \forall j, \forall u\in V, \; (w, u)\in E_j:\ y_{uj} &\geq& y_{wj} - \sum_{t: u \in V_{j, \geq t}} x_{ut}\\
 \label{eqn:src}
