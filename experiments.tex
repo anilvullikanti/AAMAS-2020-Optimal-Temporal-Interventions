@@ -76,6 +76,9 @@ Nodes with the highest eigenscore: this, and its variants have been shown to be 
 No prior results are known for \probtwo{}. Therefore, we adapt the above baselines and pick $B_0$ and $B_T$
 nodes in the order of the above scores.
 
+\subsection{Structure of solutions}
+
+LP gives almost integral solutions
 
 \subsection{Scaling}
 
@@ -113,8 +116,6 @@ for the Preferential Attachment (PA2) network.
 number of samples on x-axis for the PA1 network. }
     \label{fig:pa1pruningtime}
 \end{figure}
-\subsection{Performance Guarantees}
-Will have plots for the larger datasets for both comparison with baselines and approximation guarantees.
 
 
 
@@ -126,31 +127,42 @@ vs the number of samples on the x-axis for the PA1 network. }
     \label{fig:pa1pruningobj}
 \end{figure}
 
-\subsection{Performance Guarantees}
-Will have plots for the larger datasets for both comparison with baselines and approximation guarantees.
+\subsection{Performance Guarantees and comparison with baselines}
 
 \subsubsection{Comparison to baselines}
-\subsubsection{Approx Ratio}
+Figures \ref{fig:pa1approx}, \ref{fig:pa2approx} and \ref{fig:mont-approx} show the objective value
+for varying budgets for the \probone{} problem. We observe that \algo{} significantly outperforms
+both the baselines. For social contact networks (Fig \ref{fig:mont-approx}), which are relatively dense,
+the objective value from the eigenscore and degree baselines are over seven and three times that from
+\algo{}, over the entire budget range. \algo{} outperforms eigenscore by a similar factor in Figure \ref{fig:pa2approx} as well.
+Only in the smallest network (PA1), the differences between \algo{} and the baselines is not very high.
+It is also surprising that the degree strategy is better than eigenscore in all the networks.
+
+\subsubsection{Approximation Ratio}
+
+put approximation with respect to budget and number infections
+
 \begin{figure}[!h]
     \centering
     \includegraphics[scale = 0.55]{Figuresnew/pa1_obj.png}
-    \caption{Preferential1: Comparison of \algo{} with the degree and eigenscore based baselines.}
+    \caption{Objective value (y-axis) vs budget (x-axis) for \algo{}, and the degree and eigenscore baselines for the PA1 network.}
     \label{fig:pa1approx}
 \end{figure}
 
 \begin{figure}[!h]
     \centering
     \includegraphics[scale = 0.55]{Figuresnew/pa2_obj.png}
-    \caption{Preferential2: Comparison of \algo{} with the degree and eigenscore based baselines.}
-    \label{fig:pa1approx}
+    \caption{Objective value (y-axis) vs budget (x-axis) for \algo{}, and the degree and eigenscore baselines for the PA2 network.}
+    \label{fig:pa2approx}
 \end{figure}
 
 \begin{figure}[!h]
     \centering
     \includegraphics[scale = 0.55]{Figuresnew/mont_obj.png}
-    \caption{Montgomery: Comparison of \algo{} with the degree and eigenscore based baselines.}
-    \label{fig:pa1approx}
+    \caption{Objective value (y-axis) vs budget (x-axis) for \algo{}, and the degree and eigenscore baselines for the Montgomery network.}
+    \label{fig:mont-approx}
 \end{figure}
+
 \subsection{Two stage intervention and Structure of solution}
 We study the two stage version of \prob{}. Here no information about the outbreak is available, and so, clearly, earlier is better, i.e., if the entire budget is available at time $0$, it is better to use it right away. In Figure \ref{fig:temporal}, we examine how the objective value $\expinf{}$ increases with $T$ in a two stage intervention, where $T$ is the time of the second stage. We observe that $\expinf{}$ increases very rapidly with $T$.
 
