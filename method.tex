@@ -41,15 +41,16 @@ Solve the following linear program ($LP_{saa}$)
 \label{eqn:xy}
 \forall u \in V_{j, \geq t} - \ssrc(H_j), \forall t:\ y_{uj} &\leq& 1 - x_{ut} \\
 \label{eqn:xy2}
-\forall u \in \ssrc(H_j), \forall t:\ y_{uj} &\leq& 1 - \sum_t x_{ut} \\
+\forall u \in \ssrc(H_j), \forall t:\ y_{uj} &\leq& 1 - x_{u0} \\
 \label{eqn1}
 \forall j, \forall u\in V, \; (w, u)\in E_j:\ y_{uj} &\geq& y_{wj} - \sum_{t: u \in V_{j, \geq t}} x_{ut}\\
 \label{eqn:src}
 \forall j, \forall s \in src(H_j):\ y_{sj} &=& 1\\
 \label{eqn:budget}
 \forall t\in\mathcal{T}:\ \sum_u x_{ut} &\leq& B_t\\
-\label{eqn:uniqt}
-\forall u,\ \sum_t x_{ut} &\leq& 1\\
+%\label{eqn:uniqt}
+%\forall u,\ \sum_t x_{ut} &\leq& 1\\
+\label{eqn:01}
 \mbox{All variables} &\in& [0, 1]
 \end{eqnarray}
 \STATE
@@ -68,10 +69,61 @@ is the total set of vaccinated nodes.
 \end{algorithmic}
 \end{algorithm}
 
+\noindent
+\textbf{Intuition behind \algo{} and its analysis.}
+Our algorithm involves four key ideas, which are described below, along with an intuitive description of
+the steps of the algorithm.
+\begin{itemize}[leftmargin=0.1in, noitemsep, topsep=0pt]
+\item
+Sample average approximation technique: 
+The first idea is that it suffices to get a solution which minimizes the average number of
+infections in a set of $M$ sampled outcomes, in order to minimize $\expinf(\cdot)$, which is an expectation
+over all possible outcomes; we show that it suffices to $M$ is bounded by a polynomial in $n$.
+Further, instead of actually using simulation outcomes, Steps 1 and 2 exploit an equivalence between an
+SIR process and percolation, making this much more efficient.
+\item
+Compact integer program:
+The problem is challenging even if we have to minimize the average number of infections restricted to
+$H_1,\ldots,H_M$. We start with an integer program (IP) which expresses the following constraints: if a node $u$ is not infected in $H_j$
+(which is indicated by $y_{uj}=0$), then for every path $P$ from a node in $\ssrc(H_j)$ to $u$ in $H_j$, there must be
+a node $v$ which has been vaccinated. Further, node $v$ must have been vaccinated at a time $t< length(P)$, otherwise the
+vaccination would not be effective. 
+However, such an integer program would have exponentially many constraints (one for each path).
+Instead, we design a more compact program,
+simply based on states of nodes on an edge, as expressed in constraints (\ref{eqn1}).
+This IP is an  integral version of $LP_{saa}$, with the variables required to be binary
+which we prove is equivalent.
+\item
+Linear relaxation:
+IP cannot be solved in polynomial time, and we consider a linear relaxation of it, by replacing the binary constraints
+by (\ref{eqn01}). The resulting program $LP_{saa}$ involves minimizing a linear objective over a convex polytope,
+and so step 3 of \algo{} can be done efficiently to compute the fractional solutions $x, y$.
+Also note that since $LP_{saa}$ is optimizing over a larger space (specifically, the convex hull of all the
+feasible integral solutions), the objective value in (\ref{eqn:obj}) might be smaller than the integral objective value.
+\item
+Rounding to an integral solution:
+The solution $x$ is fractional, which poses a problem:
+if we have $x_{ut}\in(0, 1)$, e.g., a fractional value of $0.2$, it is not clear how to construct
+a valid integral solution. In Step 4(1) of \algo{}, we pick all the nodes with $y_{uj}\leq 1/2$ (denoted by $Y_{uj}=0$),
+and pick a set of nodes to vaccinate (Step 4(2)), such that every node $u$ with $Y_{uj}=0$ gets disconnected from $\ssrc(H_j)$.
+Step 4(2) achieves this by rounding the fractional solution $x$, after appropriate scaling.
+This randomized rounding step ensures that the budgets are not violated by much.
+This also implies that any node $u$ which gets infected in $H_j$ has $y_{uj}>1/2$, so that the average number
+of infections can be bounded by at most twice the fractional objective value.
+\end{itemize}
+
+We first start by showing that $LP_{saa}$ is indeed valid, which is not apparent from its structure
+
 \begin{lemma}
-The integral version of $LP_{saa}$, i.e., the program with all variables integral, instead of being in $[0, 1]$,
-gives an optimal solution.
+The constraints of $LP_{saa}$ are valid.
 \end{lemma}
+\begin{proof} (Sketch)
+Our proof involves showing that the constraints (\ref{eqn:xy}), (\ref{eqn:xy2}), (\ref{eqn1}),
+(\ref{eqn:src}), and (\ref{eqn:budget}) are valid, i.e., they are satisfied by an optimal solution.
+Consider an optimal solution $\X^*=\{\X^*_t, t\in\mathcal{T}\}$ for the set of sampled graphs
+$H_1,\ldots,H_M$. It will follow from Lemma \ref{lemma:conc} later that $\X^*$ is also ``close to''
+We define $x^*_{ut}=1$ if $u\in\X^*_t$.
+\end{proof}
 
 \begin{lemma}
 \label{lem:disconnect}
