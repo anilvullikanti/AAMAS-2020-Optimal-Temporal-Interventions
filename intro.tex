@@ -16,10 +16,9 @@ Differential equation models are small enough that they can be solved optimally 
 local search methods \cite{medlock:science09}.
 
 However, network and agent based models cannot be easily optimized this way. 
-In this paper, we study problem \prob{} of designing temporal vaccination strategies to minimize
-the expected outbreak size in an SIR epidemic process on a network $G=(V, E)$.
-There is a lot of relevant prior work on this topic, and can be split along the following lines
-(we only consider work restricted to network models):
+In this paper, we study problem \prob{} of \emph{designing temporal vaccination strategies to minimize
+the expected outbreak size in an SIR epidemic process on a network $G=(V, E)$}.
+There is a lot of relevant prior work on this topic, and can be split along the following lines:
 (1) Optimization in the SI/SIS type models, in static ot dynamic networks, e.g.,
 \cite{PreciadoVM13_2,PreciadoVM13,PreciadoVM14,SahaSDM15,Ogura2017}. Much of this work is based on
 controlling spectral properties, but does not give any guaranteed bounds on the expected outbreak size;
@@ -33,7 +32,8 @@ the intervention specified at time 0;
 directly bound the expected outbreak size,
 (4) Heuristics for picking nodes based on degree or centrality, e.g., \cite{PhysRevLett.91.247901,Miller2007EffectiveVS},
 which work for all models but give no guarantees.
-In summary, none of the prior results give rigorous results for \prob{}, which remains an open problem.
+In summary, none of the prior results give rigorous results for \prob{}, to minimize the expected
+number of infections, with budget constraints over time, in SIR models of epidemics, with transmission probability less than $1$.
 
 \noindent
 \textbf{Our results.}
