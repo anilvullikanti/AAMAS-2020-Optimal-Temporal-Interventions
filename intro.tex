@@ -8,7 +8,8 @@ vaccine supply \cite{cdc:temporal}. As a result, there is a lot of interest in e
 interventions \cite{halloran:pnas08,lofgren:pnas14}, and finding optimal interventions \cite{medlock:science09}.
 The spread of epidemics is very complex, and SIR type diffusion processes (and variations) are commonly used:
 Informally, each infected individual $u$ (in state I) spreads the infection to each susceptible neighbor $v$ 
-(in state S) with probability $p(u, v)$; this is defined formally in Section \ref{sec:prelim}.
+(in state S) with transmission probability $p(u, v)$ (or $p$, if this is uniform for all edges); 
+this is defined formally in Section \ref{sec:prelim}.
 These can be modeled as system of differential equations \cite{medlock:science09,AAAI1816714,venkataramanan:ichi17}, or as stochastic
 agent based models on social contact networks, e.g., \cite{marathe:cacm13}.
 Differential equation models are small enough that they can be solved optimally by simple brute-force
@@ -22,11 +23,15 @@ There is a lot of relevant prior work on this topic, and can be split along the 
 (1) Optimization in the SI/SIS type models, in static ot dynamic networks, e.g.,
 \cite{PreciadoVM13_2,PreciadoVM13,PreciadoVM14,SahaSDM15,Ogura2017}. Much of this work is based on
 controlling spectral properties, but does not give any guaranteed bounds on the expected outbreak size;
-(2) Static interventions in SIR models, e.g., \cite{zhang2015controlling,YaoSDM2014}, which also do not
+(2) Firefighter problem, which can be viewed as \prob{} on SI model with with $p=1$, e.g.,
+\cite{anshelevich09,Finbow2009TheFP}. Rigorous bounds are known for the number infected and saved.
+However, this has not been studied much for the case where $p<1$, except \cite{DBLP:journals/corr/abs-1711-08237},
+which only gives rigorous algorithms for trees.
+A special case of this problem is with work of \cite{Aspnes:2005}, which considers \prob{} but with
+the intervention specified at time 0;
+(3) Static interventions in SIR models, e.g., \cite{zhang2015controlling,YaoSDM2014}, which also do not
 directly bound the expected outbreak size,
-(3) SI model with transmission probability 1 \cite{Aspnes:2005}, which does not translate to results for
-the SIR model with lower transmission probability;
-(4) Heuristics for picking nodes based on degree or centrality, e.g., \cite{havlin},
+(4) Heuristics for picking nodes based on degree or centrality, e.g., \cite{PhysRevLett.91.247901,Miller2007EffectiveVS},
 which work for all models but give no guarantees.
 In summary, none of the prior results give rigorous results for \prob{}, which remains an open problem.
 
