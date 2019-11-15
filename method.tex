@@ -16,6 +16,11 @@ technique from stochastic optimization. We then show that this can be significan
 %%graphs. Let $y_{vj}$ denote the indicator variable to check whether node $v$ is reachable from any source in $H_j$.
 %%As defined earlier, $x_{vt}$ is the indicator that node $v$ is vaccinated at time $t$.
 
+Figure \ref{alg:saaround} describes \algo{}. It is based on a linear program, in which the variables $x_{vt}$
+are as defined in Section \ref{sec:prelim}. The variables $y_{vj}$ are indicators for node $v$ getting infected
+in sample $H_j$ (i.e., there is a path from $\ssrc(H_j)$ to $v$).
+We first describe the intuition behind the algorithm, and then analyze its performance.
+
 
 \begin{algorithm}{}
 \small
@@ -58,6 +63,8 @@ Let $x, y$ be the optimal fractional solution to (LP).
 We round it to an integral solution in the following manner
 \begin{enumerate}
 \item
+If $y_{vj}\in\{0, 1\}$, set $Y_{vj}=y_{vj}$. Similarly, if $x_{vt}\in\{0, 1\}$, set $X_{vt}=x_{vt}$.
+\item
 Round $Y_{vj} = 1$ for each $(v,j)$ if $y_{vj} \geq \frac{1}{2}$, otherwise set $Y_{vj} = 0$.
 \item
 For each $v, t$, set $X_{vt}=1$ with probability $\min\{1, 2 x_{vt}\log(4nMN)\}$. 
@@ -69,11 +76,12 @@ is the total set of vaccinated nodes.
 \end{algorithmic}
 \end{algorithm}
 
-\noindent
-\textbf{Intuition behind \algo{} and its analysis.}
+\subsection{Intuition behind \algo{} and its analysis}
+
 Our algorithm involves four key ideas, which are described below, along with an intuitive description of
 the steps of the algorithm.
-\begin{itemize}[leftmargin=0.1in, noitemsep, topsep=0pt]
+\begin{itemize}
+%%[leftmargin=0.1in, noitemsep, topsep=0pt]
 \item
 Sample average approximation technique: 
 The first idea is that it suffices to get a solution which minimizes the average number of
@@ -102,7 +110,8 @@ Also note that since $LP_{saa}$ is optimizing over a larger space (specifically,
 feasible integral solutions), the objective value in (\ref{eqn:obj}) might be smaller than the integral objective value.
 \item
 Rounding to an integral solution:
-The solution $x$ is fractional, which poses a problem:
+If the solution computed by $LP_{saa}$ is integral, we are done (Step 4(1)).
+However, in general solution $x$ is fractional, which poses a problem:
 if we have $x_{ut}\in(0, 1)$, e.g., a fractional value of $0.2$, it is not clear how to construct
 a valid integral solution. In Step 4(1) of \algo{}, we pick all the nodes with $y_{uj}\leq 1/2$ (denoted by $Y_{uj}=0$),
 and pick a set of nodes to vaccinate (Step 4(2)), such that every node $u$ with $Y_{uj}=0$ gets disconnected from $\ssrc(H_j)$.
@@ -111,6 +120,8 @@ This randomized rounding step ensures that the budgets are not violated by much.
 This also implies that any node $u$ which gets infected in $H_j$ has $y_{uj}>1/2$, so that the average number
 of infections can be bounded by at most twice the fractional objective value.
 \end{itemize}
+
+\subsection{Analysis of \algo{}}
 
 We first start by showing that $LP_{saa}$ is indeed valid, which is not apparent from its structure
 
@@ -149,8 +160,10 @@ If there exists $(u, t)\in S(P)$ with $2 x_{vt} \log(4nMN) \geq 1$, the rounding
 therefore, we only consider the case $2 x_{vt} \log(4nMN)\leq 1$.
 Our rounding ensures that we have $\Pr[X_{ut}=1] \geq 2 x_{vt} \log(4nMN)$, so that
 $\Pr[\sum_{u, t: u\in P\cap V_{it}} X_{ut} = 0]$ is upper bounded by
-$\prod_{(u,t) \in S(P)} \big(1- 2 x_{ut} \log(4nMN)\big) \leq e^{-\sum_{(u, t)\in S(P)} 2 x_{ut} \log(4nMN)}
-\leq e^{-\log(4nMN)}= \frac{1}{4nMN}$,
+\begin{eqnarray*}
+\prod_{(u,t) \in S(P)} \big(1- 2 x_{ut} \log(4nMN)\big) &\leq& e^{-\sum_{(u, t)\in S(P)} 2 x_{ut} \log(4nMN)}\\
+&\leq& e^{-\log(4nMN)}= \frac{1}{4nMN},
+\end{eqnarray*}
 since $\sum_{(u, t)\in S(P)} x_{ut} \geq 1-y_{vj} \geq 1/2$.
 Equivalently, the probability that no node from $S(P)$ is picked from $P$ is at most $\frac{1}{4nMN}$;
 here we say a node is picked from $S(P)$ if $X_{u,t}=1$ for some $(u, t)\in S(P)$.
@@ -176,7 +189,11 @@ $|X_t|\leq 4\log(4nMN)B_t$.
 \begin{proof}
 We have $E[\sum_u X_{ut}]\leq \sum_u 2x_{ut}\log(4nMN) \leq 2\log(4nMN)B_t$.
 The $X_{ut}$'s are all rounded independently, and so we can apply the Chernoff bound on the sum, which gives
-$\Pr[\sum_u X_{ut} > 4\log(4nMN)B_t] \leq exp(-2\log(4nMN)B_t) \leq exp(-2\log(4nMN))= \frac{1}{(4nMN)^2}\leq \frac{1}{16n^2}$.
+\begin{eqnarray*}
+\Pr[\sum_u X_{ut} > 4\log(4nMN)B_t] &\leq& exp(-2\log(4nMN)B_t)\\
+&\leq& exp(-2\log(4nMN))\\
+&=& \frac{1}{(4nMN)^2}\leq \frac{1}{16n^2}.
+\end{eqnarray*}
 The number of possible time steps in $\mathcal{T}$ is at most $n$, which implies that the probability that there exists 
 $t\in\mathcal{T}$ such that $\sum_u X_{ut} > 4\log(4nMN)B_t$ is at most $n\frac{1}{16n^2}=\frac{1}{16n}\leq 1/n$.
 \end{proof}
@@ -244,8 +261,18 @@ Therefore, all the conditions of the theorem hold with probability $\geq 1-\frac
 \end{proof}
 
 
-\subsection{Speeding up \algo{}}
+\subsection{Improving performance and speeding up \algo{}}
 
+\noindent
+\textbf{Improved approximation factor.}
+The worst case approximation is most impacted by the scaling we do in step 4(3) of \algo{}, which is needed
+for the application of the Chernoff bound in Lemma \ref{lem:budget}. However, as we discuss later,
+we find that $LP_{saa}$ computes near-integral solutions, in which most (and sometimes all) variables are integral.
+Step 4(1) handles integral variables separately. We also modify Step 4(3) by using a smaller scaling factor,
+depending on the fractional value.
+
+\noindent
+\textbf{Better scaling.}
 The main bottleneck in \algo{} is the solution of $LP_{saa}$, which has: 
 $nM$ variables of the form $y_{uj}$, $n|\mathcal{T}|$ variables of the form $x_{ut}$,
 and $\sum_j |E(H_j)|$ constraints (\ref{eqn1}).
