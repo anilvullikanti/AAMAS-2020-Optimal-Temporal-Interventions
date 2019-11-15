@@ -50,7 +50,7 @@ Solve the following linear program ($LP_{saa}$)
 \forall t\in\mathcal{T}:\ \sum_u x_{ut} &\leq& B_t\\
 %\label{eqn:uniqt}
 %\forall u,\ \sum_t x_{ut} &\leq& 1\\
-\label{eqn:01}
+\label{eqn01}
 \mbox{All variables} &\in& [0, 1]
 \end{eqnarray}
 \STATE
@@ -122,7 +122,16 @@ Our proof involves showing that the constraints (\ref{eqn:xy}), (\ref{eqn:xy2}),
 (\ref{eqn:src}), and (\ref{eqn:budget}) are valid, i.e., they are satisfied by an optimal solution.
 Consider an optimal solution $\X^*=\{\X^*_t, t\in\mathcal{T}\}$ for the set of sampled graphs
 $H_1,\ldots,H_M$. It will follow from Lemma \ref{lemma:conc} later that $\X^*$ is also ``close to''
-We define $x^*_{ut}=1$ if $u\in\X^*_t$.
+an optimal integral solution to the $\expinf$ objective itself.
+We define $x^*_{ut}=1$ if $u\in\X^*_t$, and $y^*_{vj}=1$ if node $v$ gets infected in $H_j$, i.e.,
+there is a path connecting a node in $\ssrc(H_j)$ to $v$, even after all nodes in $\cup_{t\leq dist(\ssrc(H_j), v)} X^*_t$ are 
+removed.
+This is encoded in the constraints (\ref{eqn1}) for the following reason. 
+Consider a node $u$ such that $y_{uj}=0$. From the above discussion, it must follow that on every path $P$ from
+$\ssrc(H_j)$ to $u$, some node $v$ must get vaccinated in time, i.e., within $t\leq dist(\ssrc(H_j), v)$.
+Consider the predecessor node $w$ of $u$ on path $P$. If we have $y_{wj}=0$, some node on the sub-path $P'$ of $P$
+ending in $w$ would have a vaccinated node. Otherwise, $w$ is infected in $H_j$, and the only way $u$ will not be
+infected is if $x_{ut}=1$ for some $u$.
 \end{proof}
 
 \begin{lemma}
@@ -133,7 +142,7 @@ For any $H_j$, and any node $v\in V$ with $y_{vj} < \frac{1}{2}$, we have
 \]
 where $H_j[V-\X]$ is the graph induced by removing the nodes in $\X$ from $H_j$.
 \end{lemma}
-\begin{proof}
+\begin{proof} (Sketch)
 Let $\mathcal{P}_{vj} = \{P_1, \ldots,P_L\}$ be the  set of paths to node $(v,j)$. 
 For a path $P$, let $S(P)=\{(u, t): u\in P\cap V_{it}\}$.
 If there exists $(u, t)\in S(P)$ with $2 x_{vt} \log(4nMN) \geq 1$, the rounding ensures that $X_{ut}=1$;
@@ -153,11 +162,9 @@ $S(P_i)$ is picked, and so the lemma follows.
 
 Next, we bound the violation in the budget constraints. We use the following Chernoff tail bound.
 
-\begin{theorem} (Theorem 1.1 of \cite{books/daglib/0025902}
+\begin{theorem} (Theorem 1.1 of \cite{books/daglib/0025902})
 Let $Z=\sum_{i=1}^n Z_i$, where $Z_i$ are independently distributed random variables in $[0, 1]$. Then, for any $\epsilon\in(0, 1)$, we have
 $\Pr[Z\not\in[(1-\epsilon)E[Z], (1+\epsilon)E[Z]]]\leq 2 exp(-\epsilon^2 E[Z]/3)$
-
-
 \end{theorem}
 
 \noindent
@@ -180,13 +187,15 @@ note that this includes the sources themselves.
 Let $Z(U)=\frac{1}{M}\sum_j Z_j(U)$, and let $\hat{X}_{opt}=\mbox{argmin}_{X'}Z(X')$ be the solution that
 achieves the minimum average number of infections in the samples.
 Finally, let $X_{opt}=\mbox{argmin}_{X'}\expinf(X')$ be the optimal solution to the $\prob{}$ instance,
+The following lemma shows that the average number of infections achieved by a solution $U$ restricted to
+the samples $H_1,\ldots,H_M$ is close to the $\expinf$ objective.
 
 \begin{lemma}
 \label{lemma:conc}
 Let $Z(\cdot)$ be as defined above. If $M\geq 48n\log{n}$, with probability at least $1-1/n$, for every intervention set $U$,
 we have $Z(U)\in [\frac{1}{2}\expinf(U), \frac{3}{2}\expinf(U)]$.
 \end{lemma}
-\begin{proof}
+\begin{proof} (Sketch)
 By definition, $Z(U)=\frac{1}{M}\sum_j Z_j(U)$.
 We have $E[Z(U)] = E[Z_j(U)]=\expinf(U)$ for all $j$.
 By the Chernoff bound, we have
@@ -208,7 +217,7 @@ Then, with probability at least $1/2$, we have
 $\expinf(X)\leq 6\expinf(X_{opt})$, and for all $t\in\mathcal{T}$, we have
 $|X_t|\leq 4\log(4nMN)B_t$.
 \end{theorem}
-\begin{proof}
+\begin{proof} (Sketch)
 Let $\hat{X}_{opt}$ be as defined above. 
 By Lemma \ref{lem:disconnect}, for any $v, j$, if $y_{vj} \leq 1/2$, the probability that node $v$ is
 reachable from $\ssrc(H_j)$ is at most $\frac{1}{4nM}$.
