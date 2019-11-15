@@ -23,6 +23,8 @@ A related problem is the Min-Budget version, for which an $O(\sqrt{n})$ approxim
 possible \cite{Chalermsook:2010:RMF:1873601.1873709}.
 This work corresponds to \emph{non-spreading} interventions. Better approximations are possible for the setting in which
 the vaccination is also a \emph{spreading} process.
+A special case of this problem is with work of \cite{Aspnes:2005}, which considers \prob{} but with
+the intervention specified at time 0, and $p=1$, and gave the first rigorous approximation guarantee for this problem.
 We refer to Finbow et al. \cite{Finbow2009TheFP} for an extensive survey on the firefighter problems.
 One of the few works on the firefighter problem with a stochastic disease model (i.e., $p<1$) is by
 Tennenholtz et al. \cite{DBLP:journals/corr/abs-1711-08237}, who formalize the problem as a Markov Decision Process (MDP),
@@ -35,24 +37,21 @@ has to be determined ahead of time.
 \noindent
 \textbf{Optimization of spectral properties.}
 A key result in epidemic modeling is a characterization of an outbreak in terms of spectral properties,
-namely the first eigenvalue (also referred to as the spectral radius, and denoted by $\lambda_1$)
+namely the first eigenvalue of the adjacency matrix (also referred to as the spectral radius, and denoted by $\lambda_1$),
+and the eigenvalues of the Laplacian \cite{Prakash@ICDM11,ganesh+topology05, wang+eigenvalue03}.
+An important implication of this is that the epidemic dies out if $\lambda_1$ is reduced, and this has
+formed the basis of a lot of work on epidemic control, e.g., 
+\cite{PreciadoVM13_2,PreciadoVM13,PreciadoVM14,SahaSDM15,Ogura2017,zhang2015controlling,YaoSDM2014}. 
+However, this does not lead to direct bounds on the $\expinf$ objective, and as our results show,
+the eigenscore based strategy does not do very well.
 
-\cite{PreciadoVM13_2,PreciadoVM13,PreciadoVM14,SahaSDM15,Ogura2017}. Much of this work is based on
-controlling spectral properties, but does not give any guaranteed bounds on the expected outbreak size;
-(2) Firefighter problem, which can be viewed as \prob{} on SI model with with $p=1$, e.g.,
-\cite{anshelevich09,Finbow2009TheFP}. Rigorous bounds are known for the number infected and saved.
-However, this has not been studied much for the case where $p<1$, except \cite{DBLP:journals/corr/abs-1711-08237},
-which only gives rigorous algorithms for trees.
-A special case of this problem is with work of \cite{Aspnes:2005}, which considers \prob{} but with
-the intervention specified at time 0;
-(3) Static interventions in SIR models, e.g., \cite{zhang2015controlling,YaoSDM2014}, which also do not
-directly bound the expected outbreak size,
-(4) Heuristics for picking nodes based on degree or centrality, e.g., \cite{PhysRevLett.91.247901,Miller2007EffectiveVS},
-which work for all models but give no guarantees.
-In summary, none of the prior results give rigorous results for \prob{}, to minimize the expected
-number of infections, with budget constraints over time, in SIR models of epidemics, with transmission probability less than $1$.
-
-
-There has been a lot of work on optimizing vaccine allocation. A lot of it has been based on the idea of picking nodes to vaccinate, based on their eigenscore, i.e., their component values in the first eigenvector \cite{PreciadoVM13_2,PreciadoVM13,PreciadoVM14,SahaSDM15,Ogura2017,zhang2015controlling,YaoSDM2014}. It is not clear how to incorporate temporal constraints and delay and information within such formulations. In particular, these results do not incorporate the effects of where the sources are, and instead try to shift the phase transition for a large outbreak, which is in terms of the spectral radius. As we have discussed, such static interventions don't do very well.
+\noindent
+\textbf{Heuristics based on centrality and local structure.}
+Finally, heuristics have been proposed based on local structure, e.g., degree, and centrality, e.g.,
+\cite{PhysRevLett.91.247901,Miller2007EffectiveVS,Barabasi509}.
+These do reasonably well in practice, and are especially useful when the graph structure is not known well.
+However, they do not lead to any rigorous bounds on the $\expinf$ objective.
+Further, as our experimental results show, the degree based heuristic works better than eigenscore,
+but can still be significantly worse than \algo{} in some networks.
 
 
