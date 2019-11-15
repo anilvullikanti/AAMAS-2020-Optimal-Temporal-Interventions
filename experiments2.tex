@@ -38,28 +38,18 @@ There are no prior baselines for temporal vaccination.
  Montgomery & 70729 & 198138 \\
  CA-GrQc & 5242 & 14496\\
  Small World (SW) & 2500 & 14833 \\   
- Preferential (PA) & 1000 & 1996 \\ \hline
+ Preferential1 & 1000 & 1996 \\ \hline
 \end{tabular}
 \caption{Description of datasets}
 \label{tab:datasets}
 \end{table}
 
-\subsection{Performance}
-We find that the approximation guarantee is a small constant in practice. This is shown in Figure \ref{fig:approx}, which compares the objective value of \algo{} with the fractional LP value, which is a lower bound on the optimum cost. In Figure \ref{fig:baseline}, we find that \algo{} gives a significant improvement over the baselines, in terms of the expected outbreak size.
+\subsection{Approximation Guarantees}
 \begin{figure}[!h]
     \centering
-    \includegraphics[scale = 0.4]{figures/approx.png}
-    \caption{Approximation Ratio of \algo{} on real datasets.}
-    \label{fig:approx}
-\end{figure}
- 
-
-\begin{figure}[!h]
-    \centering
-    \includegraphics[scale = 0.5]{figures/baslinecomp.png}
-    \caption{Montgomery. Comparison of \algo{} performance with degree based greedy algorithm as baseline. X-axis corresponds to the budget $B$ on the interventions, while the Y-axis corresponds to the average number of infections over all simulations. 
-    }
-    \label{fig:baseline}
+    \includegraphics[scale = 0.55]{Figuresnew/pa1_approx.png}
+    \caption{Preferential1: Comparison of \algo{} with the degree and eigenscore based baselines.}
+    \label{fig:pa1approx}
 \end{figure}
  
  
