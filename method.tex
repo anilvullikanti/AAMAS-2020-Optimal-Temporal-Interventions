@@ -246,4 +246,27 @@ Therefore, all the conditions of the theorem hold with probability $\geq 1-\frac
 
 \subsection{Speeding up \algo{}}
 
-The main bottleneck in \algo{} is the solution of the LP. Pruning methods
+The main bottleneck in \algo{} is the solution of $LP_{saa}$, which has: 
+$nM$ variables of the form $y_{uj}$, $n|\mathcal{T}|$ variables of the form $x_{ut}$,
+and $\sum_j |E(H_j)|$ constraints (\ref{eqn1}).
+The worst case dependence of the running time of LP solvers is super-quadratic in these parameters
+(though we find the Gurobi solver scales very well in practice, as we discuss later).
+In order to improve the scaling of \algo{} to larger instances, we use the following methods.
+\begin{itemize}
+\item
+Reduced number of samples: the rigorous bound on the number of samples needed in the worst case comes
+from Lemma \ref{lemma:conc}, as a result of the Chernoff bound.
+In practice, we find that there is concentration even with $O(\sqrt{n})$ samples, and so we
+use fewer samples in our experiments. This can be estimated in a statistically rigorous manner by 
+picking the smallest number of samples such that the variance is within a factor $\delta$.
+\item
+Reducing the number of variables: 
+we define the \emph{vulnerability} of node $u$, denoted by $y_u$, as probability that it gets infected
+(when no interventions are done).
+This can be estimated as tthe fraction of samples $H_j$ in which $u$ is connected to $\ssrc(H_j)$,
+i.e., $y_u=\frac{1}{M}|\{j: \mbox{$u$ is connected to $\ssrc(H_j)$}\}$.
+For a parameter $\gamma$, we restrict the interventions to nodes in $V_{\gamma}=\{v: y_v > 1-\gamma\}$;
+in other words, we can set $x_{vt}=0$ for nodes with vulnerability at most $\gamma$.
+The intuition is that such nodes are likely to have low $x_{vt}$ values in $LP_{saa}$,
+and so it is safe to remove them and reduce the size of the LP. This is borne out from our experiments.
+\end{itemize}
