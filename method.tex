@@ -34,18 +34,22 @@ Let $V_{j,t}$ denote the set of all nodes at level $t$ in the BFS tree in $H_j$
 (with the nodes in $\ssrc(H_j)$ at level $0$); let $V_{j,\geq t}=\cup_{t'\geq t} V_{j,t}$ denote
 the set of all nodes at level $t$ or more.
 \STATE
-Solve the following linear program ($LP_{saa}$), as described in Lemma \ref{lemma:ellipsoid}
+Solve the following linear program ($LP_{saa}$)
 \begin{eqnarray}
 \label{eqn:obj}
 (LP_{saa}) \qquad  \min \frac{1}{M}\sum_j \sum_v y_{vj} && \\
 \label{eqn:xy}
-\forall u \in V_{j, \geq t}, \forall t:\ y_{uj} &\leq& 1 - x_{ut} \\
+\forall u \in V_{j, \geq t} - \ssrc(H_j), \forall t:\ y_{uj} &\leq& 1 - x_{ut} \\
+\label{eqn:xy2}
+\forall u \in \ssrc(H_j), \forall t:\ y_{uj} &\leq& 1 - \sum_t x_{ut} \\
 \label{eqn1}
 \forall j, \forall u\in V, \; (w, u)\in E_j:\ y_{uj} &\geq& y_{wj} - \sum_{t: u \in V_{j, \geq t}} x_{ut}\\
 \label{eqn:src}
 \forall j, \forall s \in src(H_j):\ y_{sj} &=& 1\\
 \label{eqn:budget}
 \forall t\in\mathcal{T}:\ \sum_u x_{ut} &\leq& B_t\\
+\label{eqn:uniqt}
+\forall u,\ \sum_t x_{ut} &\leq& 1\\
 \mbox{All variables} &\in& [0, 1]
 \end{eqnarray}
 \STATE
@@ -64,6 +68,10 @@ is the total set of vaccinated nodes.
 \end{algorithmic}
 \end{algorithm}
 
+\begin{lemma}
+The integral version of $LP_{saa}$, i.e., the program with all variables integral, instead of being in $[0, 1]$,
+gives an optimal solution.
+\end{lemma}
 
 \begin{lemma}
 \label{lem:disconnect}
