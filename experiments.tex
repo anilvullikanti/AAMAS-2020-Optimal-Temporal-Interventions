@@ -1,19 +1,19 @@
 \section{Experiments}
 \label{sec:experiments}
 
-We study the following questions
+We study the following questions:
 \begin{itemize}
 \item
-Scaling: how well does \algo{} scale to large networks? How effective are the techniques for choosing the
+\textbf{Scaling}: how well does \algo{} scale to large networks? How effective are the techniques for choosing the
 number of samples and pruning?
 \item
-Approximation Guarantees: what is the approximation factor of \algo{} in practice? How does it compare with 
+\textbf{Approximation Guarantees}: what is the approximation factor of \algo{} in practice? How does it compare with 
 the current best methods for intervention design in networks?
 \item
-Effect of multiple stages: how does the effectiveness of the solution vary with the number of stages
+\textbf{Effect of multiple stages}: how does the effectiveness of the solution vary with the number of stages
 and the budget in each?
 \item
-Characteristics of the solutions: what kinds of nodes are picked in the solutions at each stage?
+\textbf{Characteristics of the solutions}: what kinds of nodes are picked in the solutions at each stage?
 \end{itemize}
 
 \subsection{Dataset and Methods}
@@ -23,9 +23,7 @@ Characteristics of the solutions: what kinds of nodes are picked in the solution
 We experiment with three different classes of networks (total of five),
 in order to fully explore the effect of network structure on the the results. 
 We consider two random networks, namely the small world 
-\cite{Kleinberg00thesmall-world}, and preferential attachment \cite{Barabasi509} models. 
-We also consider synthetic agent based populations for Montgomery County, VA, and Portland, OR,
-constructed by a first principles approach by \cite{barrett:wsc09,eubank:nature04}. This has been used in several public health studies, e.g., \cite{singh:bmc19}. This network has a rich set of demographic attributes for each node, e.g., age, gender, and income.
+\cite{Kleinberg00thesmall-world}, and the preferential attachment \cite{Barabasi509} models. The parameters used in generation of the random networks is presented in the full version. \cite{fullpaper}. We also consider synthetic agent based populations for Montgomery County, VA, and Portland, OR, constructed by a first principles approach by \cite{barrett:wsc09,eubank:nature04}. This has been used in several public health studies, e.g., \cite{singh:bmc19}. This network has a rich set of demographic attributes for each node, e.g., age, gender, and income.
 The datasets are summarized in Table \ref{tab:datasets}.
 
 \noindent
@@ -39,10 +37,7 @@ that result when there are no interventions: we choose a probability $p_{low}$ i
 $p_{med}$ if the attack rate is in $[10\%, 20\%]$ (medium), and
 $p_{high}$ if the attack rate is $> 20\%$.
 The specific probability values depend on the datasets.
-The full version of the paper \cite{fullversion} shows how the attack rate varies with the probability,
-and the specific probability values which were chosen.
-
-
+The full version of the paper \cite{fullversion} shows how the attack rate varies with the probability, and the specific probability values which were chosen.
 
 \begin{table}[!h]
 \centering
@@ -62,7 +57,7 @@ Preferential2 (PA2) & 100000 & 199996 \\ \hline
 \noindent
 \textbf{Methods.}
 We only focus on one stage (\probone) or two stage (\probtwo) versions of \prob{} here, and use \algo{} to find 
-interventions. We use the Gurobi solver to implement \algo{}.
+interventions. We use the Gurobi solver \cite{gurobi} to implement \algo{}.
 For \probone{}, we consider the following baselines, which select $B$ nodes based on two criteria:
 \begin{itemize}
 \item
@@ -86,15 +81,15 @@ We find that \algo{} easily scales to all the networks we consider. The two stra
 significant impact on the scaling.
 \begin{itemize}
 \item
-Number of samples needed: we find $O(\sqrt{n})$ samples are sufficient to get reasonable variance, as shown in Figure \ref{fig:pa_boxplot},
+\textbf{Number of samples needed}: we find that $O(\sqrt{n})$ samples are sufficient to get reasonable variance, as shown in Figure \ref{fig:pa_boxplot},
 instead of the worst case bound of $\Theta(n\log{n})$ from Lemma \ref{lemma:conc}.
 The number of samples needed is lower when the transmission probability is medium or high, and when the budget is not too high,
 since this has better convergence. We note that these are typically the regimes of maximum concern in public health.
 \item
-Impact of pruning: the pruning of low vulnerability nodes has a very significant impact on the running time,
+\textbf{Impact of pruning}: the pruning of low vulnerability nodes has a very significant impact on the running time,
 as shown in Figure \ref{fig:pa1pruningtime}, which shows the running time with and without pruning. 
 When the number of samples used is low, the difference is negligible, but when the number of samples increases to
-the range needed for low variance, we find the difference in running time is several orders of magnitude.
+the range needed for low variance, we find the difference in running times is in several orders of magnitude.
 The objective value differs by less than $5\%$ with and without pruning, as shown in Figure \ref{fig:pa1pruningobj}.
 This implies that our scaling strategies give good solutions on very large networks.
 \end{itemize}
@@ -102,7 +97,7 @@ This implies that our scaling strategies give good solutions on very large netwo
 \begin{figure}[!h]
     \centering
     \includegraphics[scale = 0.4]{Figuresnew/boxplotpa.png}
-    \caption{Average number of infections over the $M$ samples (y-axis) vs $M/100$, i.e., the number of samples (in 100s) on the x-axis
+    \caption{Number of infections over the $M$ samples (y-axis) vs $M/100$, i.e., the number of samples (in 100s) on the x-axis
 for the Preferential Attachment (PA2) network.
 }
     \label{fig:pa_boxplot}
@@ -158,7 +153,7 @@ put approximation with respect to budget and number infections
 
 \begin{figure}[!h]
     \centering
-    \includegraphics[scale = 0.55]{Figuresnew/mont_obj.png}
+    \includegraphics[scale = 0.6]{Figuresnew/mont_obj.png}
     \caption{Objective value (y-axis) vs budget (x-axis) for \algo{}, and the degree and eigenscore baselines for the Montgomery network.}
     \label{fig:mont-approx}
 \end{figure}
@@ -169,8 +164,8 @@ We study the two stage version of \prob{}. Here no information about the outbrea
 Next, we examine the structure of the sets picked in each stage. Figure \ref{fig:montagedeg} shows a scatter plot of the node degree and age of the solution to a two stage version with $T=4$. We observe that there are slight differences between the sets $X_0$ and $X_4$: $X_0$ has slightly higher degree nodes, whereas $X_4$ has slightly lower age nodes. But more importantly, \emph{it is not the case that all high degree nodes are used in $X_0$}.
 \begin{figure}[!h]
     \centering
-    \includegraphics[scale = 0.45]{figures/twostage.png}
-    \caption{CA-GrQc. Impact of varying $T$ in Two-stage Intervention. The X-axis corresponds to time step $T$ at which 2nd intervention is performed (1st intervention is at T =0). The Y-axis corresponds to the average number of infections over the simulations.}
+    \includegraphics[scale = 0.55]{figures/twostage.png}
+    \caption{\red{remove tilte} CA-GrQc. Impact of varying $T$ in Two-stage Intervention. The X-axis corresponds to time step $T$ at which 2nd intervention is performed (1st intervention is at T =0). The Y-axis corresponds to the average number of infections over the simulations.}
     \label{fig:temporal}
 \end{figure}
 
