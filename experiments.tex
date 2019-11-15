@@ -72,6 +72,23 @@ Will have plots for the larger datasets for both comparison with baselines and a
     \caption{Preferential1: Comparison of \algo{} with the degree and eigenscore based baselines.}
     \label{fig:pa1approx}
 \end{figure}
+\subsection{Two stage intervention and Structure of solution}
+We study the two stage version of \prob{}. Here no information about the outbreak is available, and so, clearly, earlier is better, i.e., if the entire budget is available at time $0$, it is better to use it right away. In Figure \ref{fig:temporal}, we examine how the objective value $\expinf{}$ increases with $T$ in a two stage intervention, where $T$ is the time of the second stage. We observe that $\expinf{}$ increases very rapidly with $T$.
+
+Next, we examine the structure of the sets picked in each stage. Figure \ref{fig:montagedeg} shows a scatter plot of the node degree and age of the solution to a two stage version with $T=4$. We observe that there are slight differences between the sets $X_0$ and $X_4$: $X_0$ has slightly higher degree nodes, whereas $X_4$ has slightly lower age nodes. But more importantly, \emph{it is not the case that all high degree nodes are used in $X_0$}.
+\begin{figure}[!h]
+    \centering
+    \includegraphics[scale = 0.5]{figures/twostage.png}
+    \caption{CA-GrQc. Impact of varying $T$ in Two-stage Intervention. The X-axis corresponds to time step $T$ at which 2nd intervention is performed (1st intervention is at T =0). The Y-axis corresponds to the average number of infections over the simulations.}
+    \label{fig:temporal}
+\end{figure}
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[scale = 0.45]{figures/t0_t4_compare_age_deg.pdf}
+    \caption{Montgomery Graph: scatter plot of age and degree of nodes of the sets $X_0$ and $X_4$ in a solution to the 2-stage \prob{} with budgets $B_1 = B_4 = 25$.}
+    \label{fig:montagedeg}
+\end{figure}
 
 \
 %\subsection{Approximation Guarantees}
