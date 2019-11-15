@@ -1,19 +1,48 @@
 \section{Experiments}
 \label{sec:experiments}
-We answer the following questions in our experiments:
-1. Sampling, Scaling, and Speeding.
-2. Approximation Guarantees.
-3. Budget vs. Infected.
-4. Characterizing structure of the solution.
+
+We study the following questions
+\begin{itemize}
+\item
+Scaling: how well does \algo{} scale to large networks? How effective are the techniques for choosing the
+number of samples and pruning?
+\item
+Approximation Guarantees: what is the approximation factor of \algo{} in practice? How does it compare with 
+the current best methods for intervention design in networks?
+\item
+Effect of multiple stages: how does the effectiveness of the solution vary with the number of stages
+and the budget in each?
+\item
+Characteristics of the solutions: what kinds of nodes are picked in the solutions at each stage?
+\end{itemize}
 
 \subsection{Dataset and Methods}
-We experiment with four very different kinds of networks, three random and one real, in order to fully explore the effect of network structure on the the results. We consider two random networks, namely the small world 
-\cite{Kleinberg00thesmall-world}, and preferential attachment \cite{Barabasi509} models. Finally, we consider a synthetic agent based population for Montgomery County, VA, constructed by a first principles approach by \cite{barrett:wsc09,eubank:nature04}. This has been used in several public health studies, e.g., \cite{singh:bmc19}. This network has a rich set of demographic attributes for each node, e.g., age, gender, and income.
 
 \noindent
-\textbf{Methods.}
-We use \algo{} with one time step (i.e., $\mathcal{T}=\{0\}$, also referred to as single stage), or two time steps (i.e., $\mathcal{T}=\{0, T\}$, referred to as two stage, with $t=0$ being the first stage, and $t=T$ being the second stage). For the single stage problem, we use the strategy of picking nodes based on highest degree or eigenscore, which is the component in the first eigenvector of the graph's adjacency matrix as baselines \cite{tong:cikm12}.
-There are no prior baselines for temporal vaccination. 
+\textbf{Datasets.}
+We experiment with three different classes of networks (total of five),
+in order to fully explore the effect of network structure on the the results. 
+We consider two random networks, namely the small world 
+\cite{Kleinberg00thesmall-world}, and preferential attachment \cite{Barabasi509} models. 
+We also consider synthetic agent based populations for Montgomery County, VA, and Portland, OR,
+constructed by a first principles approach by \cite{barrett:wsc09,eubank:nature04}. This has been used in several public health studies, e.g., \cite{singh:bmc19}. This network has a rich set of demographic attributes for each node, e.g., age, gender, and income.
+The datasets are summarized in Table \ref{tab:datasets}.
+
+\noindent
+\textbf{Choosing parameters.}
+There is a large space of model parameters over which the analysis could be done. Due to the space limits, and
+in order to get the most insights, we choose a subset as descirbed here.
+We choose the source distribution $\src$ so that about 10 initial infections are picked.
+Following standard practice in public health, e.g., \cite{halloran:pnas08},
+we choose three values for the transmission probability $p$ based on the expected number of infections (referred to as the ``attack rate'') 
+that result when there are no interventions: we choose a probability $p_{low}$ if the attack rate is $<10\%$ (low),
+$p_{med}$ if the attack rate is in $[10\%, 20\%]$ (medium), and
+$p_{high}$ if the attack rate is $> 20\%$.
+The specific probability values depend on the datasets.
+The full version of the paper \cite{fullversion} shows how the attack rate varies with the probability,
+and the specific probability values which were chosen.
+
+
 
 \begin{table}[!h]
 \centering
@@ -21,64 +50,80 @@ There are no prior baselines for temporal vaccination.
 \hline
  \textbf{Dataset} & \textbf{Nodes} & \textbf{Edges}   \\ \hline
  Montgomery & 70729 & 198138 \\
-Preferential2 (PA2) & 100000 & 199996 \\
+\textcolor{red}{Portland} & & \\
  Small World (SW) & 2500 & 14833 \\   
  Preferential1 (PA1) & 1000 & 1996 \\ \hline
+Preferential2 (PA2) & 100000 & 199996 \\
 \end{tabular}
 \caption{Description of datasets}
 \label{tab:datasets}
 \end{table}
 
-\subsection{Sampling, Scaling, and Speeding}
-\textbf{Impact of varying $p$ on the average infections}
-In this experiment, for each graph, we sample 100 subgraphs varying the probability of infection $p$. The expected number of sources are set to 10. Figure \ref{fig:PA_ar} shows, for the graph PA, that the average percentage of infections is low (within 30\% of the population) for $p \leq 0.25$, medium (within 60\%) for $0.25 < p < 0.4$, high ($\geq 60\%$) for $p \geq 0.4$. Figure \ref{fig:montgo_ar} shows that with a very small probability close to $0.1$, the average percentage of infections rise above 55\% (medium) of the total population. 
+\noindent
+\textbf{Methods.}
+We only focus on one stage (\probone) or two stage (\probtwo) versions of \prob{} here, and use \algo{} to find 
+interventions. We use the Gurobi solver to implement \algo{}.
+For \probone{}, we consider the following baselines, which select $B$ nodes based on two criteria:
+\begin{itemize}
+\item
+Nodes with the highest degree, which has been a popular approach in a number of papers
+\cite{salathe:plos12, Barabasi509}
+\item
+Nodes with the highest eigenscore: this, and its variants have been shown to be the best strategy to reduce the spectral radius
+\cite{tong:cikm12,zhang2015controlling,YaoSDM2014,AAAI1816714,PreciadoVM13_2,PreciadoVM13,PreciadoVM14}
+\end{itemize}
 
-\begin{figure}[!h]
-    \centering
-    \includegraphics[scale = 0.55]{Figuresnew/PA_attackrates.eps}
-    \caption{Preferential: p vs avg. percent infected.)}
-    \label{fig:PA_ar}
-\end{figure}
-
-\begin{figure}[!h]
-    \centering
-    \includegraphics[scale = 0.55]{Figuresnew/montgo_attackrates.eps}
-    \caption{Montgomery: p vs avg. percent infected.}
-    \label{fig:montgo_ar}
-\end{figure}
-
+No prior results are known for \probtwo{}. Therefore, we adapt the above baselines and pick $B_0$ and $B_T$
+nodes in the order of the above scores.
 
 
-\begin{figure}[!h]
-    \centering
-    \includegraphics[scale = 0.6]{Figuresnew/simulations.png}
-    \caption{Simulation vs average infected (Preferential Attachment)}
-    \label{fig:pa_simvsavg}
-\end{figure}
+\subsection{Scaling}
+
+We find that \algo{} easily scales to all the networks we consider. The two strategies for speeding up have a
+significant impact on the scaling.
+\begin{itemize}
+\item
+Number of samples needed: we find $O(\sqrt{n})$ samples are sufficient to get reasonable variance, as shown in Figure \ref{fig:pa_boxplot},
+instead of the worst case bound of $\Theta(n\log{n})$ from Lemma \ref{lemma:conc}.
+The number of samples needed is lower when the transmission probability is medium or high, and when the budget is not too high,
+since this has better convergence. We note that these are typically the regimes of maximum concern in public health.
+\item
+Impact of pruning: the pruning of low vulnerability nodes has a very significant impact on the running time,
+as shown in Figure \ref{fig:pa1pruningtime}, which shows the running time with and without pruning. 
+When the number of samples used is low, the difference is negligible, but when the number of samples increases to
+the range needed for low variance, we find the difference in running time is several orders of magnitude.
+The objective value differs by less than $5\%$ with and without pruning, as shown in Figure \ref{fig:pa1pruningobj}.
+This implies that our scaling strategies give good solutions on very large networks.
+\end{itemize}
  
 \begin{figure}[!h]
     \centering
     \includegraphics[scale = 0.4]{Figuresnew/boxplotpa.png}
-    \caption{Box-plot: Simulation vs average infected (Preferential Attachment). X-axis: number of simulations (in 100s). Y-axis the number of infected.}
+    \caption{Average number of infections over the $M$ samples (y-axis) vs $M/100$, i.e., the number of samples (in 100s) on the x-axis
+for the Preferential Attachment (PA2) network.
+}
     \label{fig:pa_boxplot}
 \end{figure}
-\subsection{Performance Guarantees}
-Will have plots for the larger datasets for both comparison with baselines and approximation guarantees.
-\subsection{Pruning}
+
+
 \begin{figure}[!h]
     \centering
     \includegraphics[scale = 0.55]{Figuresnew/pa1_runtime.png}
-    \caption{Preferential1: Comparison of runtimes of Linear Programs with (LP-P) and without pruning (LP). }
+    \caption{Comparison of runtimes of Linear Programs with (LP-P) and without pruning (LP) on y-axis vs 
+number of samples on x-axis for the PA1 network. }
     \label{fig:pa1pruningtime}
 \end{figure}
 
 \begin{figure}[!h]
     \centering
     \includegraphics[scale = 0.55]{Figuresnew/pa1_objpruning.png}
-    \caption{Preferential1: Comparison of of objective values of Linear Programs with (LP-P) and without pruning (LP). }
+    \caption{Comparison of the objective values of Linear Programs with (LP-P) and without pruning (LP) on the y-axis
+vs the number of samples on the x-axis for the PA1 network. }
     \label{fig:pa1pruningobj}
 \end{figure}
 
+\subsection{Performance Guarantees}
+Will have plots for the larger datasets for both comparison with baselines and approximation guarantees.
 
 \subsubsection{Comparison to baselines}
 \subsubsection{Approx Ratio}

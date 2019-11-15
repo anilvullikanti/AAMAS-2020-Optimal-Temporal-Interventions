@@ -1,8 +1,28 @@
 \section{Appendix}
 \label{appendix}
 
-\subsection{Proof of Lemma \ref{lemma:ellipsoid}}
+\subsection{Choosing model parameters}
 
-The proof is by using the ellipsoid method \cite{gls:book}, which gives polynomial time solutions to linear programs even if they have exponential number of constraints. The main idea is to construct a separation oracle $\mathcal{O}$, which given a candidate solution $x, y$, either verifies that it is a feasible solution, or finds a constraint that is violated. If the oracle runs in polynomial time, the ellipsoid method works in polynomial time.
 
-For the linear program (LP), given a candidate solution $x, y$, it is easy to verify whether or not the objective value is within a certain bound, and if the budget constraints are all satisfied. The main challenge is to verify that for each $v, j$, the condition for each path $P$ is satisfied, since there an be an exponential number of paths. Our separation oracle instead solves this as a shortest path problem. Observe that if we consider the weight of a path to be the sum of all the $x_{ut}$ variables on it, the path constraint involves just checking if the path weight is at least $1-y_{vj}$. This can be done directly by running a shortest path algorithm using node weights. If it turns out that for some $v,j$, the distance to $v$ is more than $1-y_{vj}$, the shortest path gives us a violated constraint.
+\begin{figure}[!h]
+    \centering
+    \includegraphics[scale = 0.55]{Figuresnew/PA_attackrates.eps}
+    \caption{Preferential: p vs avg. percent infected.)}
+    \label{fig:PA_ar}
+\end{figure}
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[scale = 0.55]{Figuresnew/montgo_attackrates.eps}
+    \caption{Montgomery: p vs avg. percent infected.}
+    \label{fig:montgo_ar}
+\end{figure}
+
+
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[scale = 0.6]{Figuresnew/simulations.png}
+    \caption{Simulation vs average infected (Preferential Attachment)}
+    \label{fig:pa_simvsavg}
+\end{figure}
