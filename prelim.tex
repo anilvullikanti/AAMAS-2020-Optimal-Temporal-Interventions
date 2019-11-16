@@ -49,21 +49,20 @@ namely $0$ and $T$.\\
 \begin{tabular}{|l|l|}
 \hline
 \textbf{Notation} & \textbf{Definition}\\
-$G=(V, E)$ & graph\\
-$\src$ & \\
-$p$, $p(u, v)$ & prob\\
-$x_{vt}$ & \\
-$\X_t$ & \\
-$\X$ & \\
-$\mathcal{T}$ & \\
-$\expinf(G, \src, \mathcal{T}, \X)$ & \\
-$\expinf(G, \src)$ & \\
-$\expinf(G, \src, \X_0)$ & \\
-$\expinf(G, \src, \X_0, \X_T)$ & \\
-\prob & \\
-\probone & \\
-\probtwo & \\
-$(\alpha, \beta)$ approximation & \\
+$G=(V, E)$ & Graph\\
+$\src$ & Source distribution\\
+$p$, $p(u, v)$ & Transmission probability\\
+$x_{vt}$ & Indicator for node $v$ vaccinated at time $t$\\
+$\X_t$ & Set of nodes vaccinated at time $t$\\
+$\X$ & Set of all $\X_t$'s\\
+$\mathcal{T}$ & Time steps at which intervention is done\\
+$\expinf(G, \src, \mathcal{T}, \X)$ & Expected number of infections with intervention $\X$\\
+$\expinf(G, \src, \X_0)$ & Exp. \#infections for single stage with intervention $\X_0$\\
+$\expinf(G, \src, \X_0, \X_T)$ & Exp. \#infections for two stage version\\
+\prob & Designing temporal intervention to minimize $\expinf$\\
+\probone & Problem with one stage\\
+\probtwo & Problem with two stage\\
+$(\alpha, \beta)$ approximation & Bicriteria approximation factor\\
 \hline
 \end{tabular}
 \end{footnotesize}
