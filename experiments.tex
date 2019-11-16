@@ -20,10 +20,10 @@ and the budget in each?
 
 \noindent
 \textbf{Datasets.}
-We experiment with three different classes of networks (total of five),
+We experiment with three different classes of networks (total of six),
 in order to fully explore the effect of network structure on the the results. 
 We consider two random networks, namely the small world 
-\cite{Kleinberg00thesmall-world}, and the preferential attachment \cite{Barabasi509} models. The parameters used in generation of the random networks is presented in the full version. \cite{fullpaper}. We also consider synthetic agent based populations for Montgomery County, VA, and Portland, OR, constructed by a first principles approach by \cite{barrett:wsc09,eubank:nature04}. This has been used in several public health studies, e.g., \cite{singh:bmc19}. This network has a rich set of demographic attributes for each node, e.g., age, gender, and income.
+\cite{Kleinberg00thesmall-world}, and the preferential attachment \cite{Barabasi509} models. We also study the results on the CA-GrQc collaboration network \cite{Leskovec:2007:GED:1217299.1217301}, since it is a type of social network. The parameters used in generation of the random networks is presented in the full version. \cite{fullpaper}. We also consider synthetic agent based populations for Montgomery County, VA, and Portland, OR, constructed by a first principles approach by \cite{barrett:wsc09,eubank:nature04}. This has been used in several public health studies, e.g., \cite{singh:bmc19}. This network has a rich set of demographic attributes for each node, e.g., age, gender, and income.
 The datasets are summarized in Table \ref{tab:datasets}.
 
 \noindent
@@ -46,6 +46,7 @@ The full version of the paper \cite{fullversion} shows how the attack rate varie
  \textbf{Dataset} & \textbf{Nodes} & \textbf{Edges}   \\ \hline
  Montgomery & 70729 & 198138 \\
  Portland & 1409197 & 8307767 \\
+ CA-GrQc & 5242 & 14496\\
  Small World (SW) & 2500 & 14833 \\   
  Preferential1 (PA1) & 1000 & 1996 \\ 
 Preferential2 (PA2) & 100000 & 199996 \\ \hline
@@ -73,7 +74,7 @@ nodes in the order of the above scores.
 
 \subsection{Structure of solutions}
 
-LP gives almost integral solutions
+LP gives almost integral solutions. In our experiments, only 15 out of 40 runs on four networks, had fractional values in the solution. 
 
 \subsection{Scaling}
 
@@ -106,63 +107,105 @@ for the Preferential Attachment (PA2) network.
 
 \begin{figure}[!h]
     \centering
-    \includegraphics[scale = 0.6]{Figuresnew/pa1_runtime}
+    \includegraphics[scale = 0.52]{Figuresnew/pa1_runtime}
     \caption{Comparison of runtimes of Linear Programs with (LP-P) and without pruning (LP) on y-axis vs 
 number of samples on x-axis for the PA1 network. }
     \label{fig:pa1pruningtime}
 \end{figure}
 
 
-
 \begin{figure}[!h]
     \centering
-    \includegraphics[scale = 0.55]{Figuresnew/pa1_objpruning}
+    \includegraphics[scale = 0.52]{Figuresnew/pa1_objpruning}
     \caption{Comparison of the objective values of Linear Programs with (LP-P) and without pruning (LP) on the y-axis
 vs the number of samples on the x-axis for the PA1 network. }
     \label{fig:pa1pruningobj}
 \end{figure}
 
+\begin{figure}[!h]
+    \centering
+    \includegraphics[scale = 0.52]{Figuresnew/portland_obj.eps}
+    \caption{Comparison of objective values of Linear Programs with (LP-P) and without pruning (LP) on y-axis vs 
+number of samples on x-axis for the Portland network. }
+    \label{fig:portlandobj}
+\end{figure}
+
 \subsection{Performance Guarantees and comparison with baselines}
 
 \subsubsection{Comparison to baselines}
-Figures \ref{fig:pa1approx}, \ref{fig:pa2approx} and \ref{fig:mont-approx} show the objective value
+Figures \ref{fig:performance} (a-c) show the objective value
 for varying budgets for the \probone{} problem. We observe that \algo{} significantly outperforms
-both the baselines. For social contact networks (Fig \ref{fig:mont-approx}), which are relatively dense,
+both the baselines. For social contact networks (Fig \ref{fig:performance}) (d), which are relatively dense,
 the objective value from the eigenscore and degree baselines are over seven and three times that from
-\algo{}, over the entire budget range. \algo{} outperforms eigenscore by a similar factor in Figure \ref{fig:pa2approx} as well.
+\algo{}, over the entire budget range. \algo{} outperforms eigenscore by a similar factor in Figure \ref{fig:performance} (c) as well.
 Only in the smallest network (PA1), the differences between \algo{} and the baselines is not very high.
 It is also surprising that the degree strategy is better than eigenscore in all the networks.
 
 \subsubsection{Approximation Ratio}
+We observe that the approximation ratio with respect to the objective value is close to 1. Figures \ref{fig:performance} shows that for all four networks the objective value of LP optimal solution almost coincides with that of \algo{}. Also, the approximation ratio with respect to budget violation is close to 1, in practice, shown in Figure \ref{fig:budgetviolation}.
 
-put approximation with respect to budget and number infections
+%\begin{figure}[!h]
+    %\centering
+    %\includegraphics[scale = 0.55]{Figuresnew/pa1_approx}
+    %\caption{Objective value (y-axis) vs budget (x-axis) for \algo{}, and the degree and eigenscore baselines for the PA1 network.}
+%    \label{fig:pa1approx}
+%\end{figure}
+%
+%\begin{figure}[!h]
+  %  \centering
+  %  \includegraphics[scale = 0.55]{Figuresnew/barabasi_approx}
+  %  \caption{Objective value (y-axis) vs budget (x-axis) for \algo{}, and the degree and eigenscore baselines for the PA2 network.}
+  %  \label{fig:pa2approx}
+%\end{figure}
+
+%\begin{figure}[!h]
+ %   \centering
+ %   \includegraphics[scale = 0.6]{Figuresnew/mont_approx}
+ %   \caption{Objective value (y-axis) vs budget (x-axis) for \algo{}, and the degree and eigenscore baselines for the Montgomery network.}
+ %   \label{fig:mont-approx}
+%\end{figure}
+
+%\begin{figure}[!h]
+    %\centering
+    %\includegraphics[scale = 0.6]{Figuresnew/smallworld_approx}
+    %\caption{Objective value (y-axis) vs budget (x-axis) for \algo{}, and the degree and eigenscore baselines for the Small World network.}
+%    \label{fig:mont-approx}
+%\end{figure}
+
+\begin{figure*}[ht] 
+  \begin{minipage}[b]{0.5\linewidth}
+    \centering
+    \includegraphics[scale=0.48]{Figuresnew/pa1_approx} 
+    \caption*{a. Preferential1 (PA1)} 
+    \vspace{1ex}
+  \end{minipage}%%
+  \begin{minipage}[b]{0.5\linewidth}
+    \centering
+    \includegraphics[scale=0.48]{Figuresnew/smallworld_approx} 
+    \caption*{b. Small World (SW)} 
+    \vspace{1ex}
+  \end{minipage} 
+  \begin{minipage}[b]{0.5\linewidth}
+    \centering
+    \includegraphics[scale=0.48]{Figuresnew/barabasi_approx} 
+    \caption*{c. Preferential2 (PA2)} 
+    \vspace{1ex}
+  \end{minipage}%% 
+  \begin{minipage}[b]{0.5\linewidth}
+    \centering
+    \includegraphics[scale=0.48]{Figuresnew/mont_approx} 
+    \caption*{d. Montgomery} 
+    \vspace{1ex}
+  \end{minipage}
+  \caption{Objective value (y-axis) vs budget (x-axis) for \algo{}, and the degree and eigenscore baselines for four networks.}
+  \label{fig:performance} 
+\end{figure*}
 
 \begin{figure}[!h]
     \centering
-    \includegraphics[scale = 0.55]{Figuresnew/pa1_approx}
-    \caption{Objective value (y-axis) vs budget (x-axis) for \algo{}, and the degree and eigenscore baselines for the PA1 network.}
-    \label{fig:pa1approx}
-\end{figure}
-
-\begin{figure}[!h]
-    \centering
-    \includegraphics[scale = 0.55]{Figuresnew/barabasi_approx}
-    \caption{Objective value (y-axis) vs budget (x-axis) for \algo{}, and the degree and eigenscore baselines for the PA2 network.}
-    \label{fig:pa2approx}
-\end{figure}
-
-\begin{figure}[!h]
-    \centering
-    \includegraphics[scale = 0.6]{Figuresnew/mont_approx}
-    \caption{Objective value (y-axis) vs budget (x-axis) for \algo{}, and the degree and eigenscore baselines for the Montgomery network.}
-    \label{fig:mont-approx}
-\end{figure}
-
-\begin{figure}[!h]
-    \centering
-    \includegraphics[scale = 0.6]{Figuresnew/smallworld_approx}
-    \caption{Objective value (y-axis) vs budget (x-axis) for \algo{}, and the degree and eigenscore baselines for the Small World network.}
-    \label{fig:mont-approx}
+    \includegraphics[scale = 0.52]{Figuresnew/budgetviolation}
+    \caption{Budget approximation ratio: the ratio of interventions after rounding to the ones before rounding. X-axis is the original budget. Y-axis is the approximation ratio.}
+    \label{fig:budgetviolation}
 \end{figure}
 
 \subsection{Two stage intervention and Structure of solution}
@@ -171,14 +214,14 @@ We study the two stage version of \prob{}. Here no information about the outbrea
 Next, we examine the structure of the sets picked in each stage. Figure \ref{fig:montagedeg} shows a scatter plot of the node degree and age of the solution to a two stage version with $T=4$. We observe that there are slight differences between the sets $X_0$ and $X_4$: $X_0$ has slightly higher degree nodes, whereas $X_4$ has slightly lower age nodes. But more importantly, \emph{it is not the case that all high degree nodes are used in $X_0$}.
 \begin{figure}[!h]
     \centering
-    \includegraphics[scale = 0.55]{figures/twostage.png}
-    \caption{\red{remove tilte} CA-GrQc. Impact of varying $T$ in Two-stage Intervention. The X-axis corresponds to time step $T$ at which 2nd intervention is performed (1st intervention is at T =0). The Y-axis corresponds to the average number of infections over the simulations.}
+    \includegraphics[scale = 0.55]{Figuresnew/twostage}
+    \caption{CA-GrQc. Impact of varying $T$ in Two-stage Intervention. The X-axis corresponds to time step $T$ at which 2nd intervention is performed (1st intervention is at T =0). The Y-axis corresponds to the average number of infections over the simulations.}
     \label{fig:temporal}
 \end{figure}
 
 \begin{figure}[!h]
     \centering
-    \includegraphics[scale = 0.45]{figures/t0_t4_compare_age_deg.pdf}
+    \includegraphics[scale = 0.5]{figures/t0_t4_compare_age_deg.pdf}
     \caption{Montgomery Graph: scatter plot of age and degree of nodes of the sets $X_0$ and $X_4$ in a solution to the 2-stage \prob{} with budgets $B_1 = B_4 = 25$.}
     \label{fig:montagedeg}
 \end{figure}
