@@ -10,7 +10,7 @@ The spread of epidemics is very complex, and SIR type diffusion processes (and v
 Informally, each infected individual $u$ (in state I) spreads the infection to each susceptible neighbor $v$ 
 (in state S) with transmission probability $p(u, v)$ (or $p$, if this is uniform for all edges); 
 this is defined formally in Section \ref{sec:prelim}.
-These can be modeled as system of differential equations \cite{medlock:science09,AAAI1816714,venkataramanan:ichi17}, or as stochastic
+These can be modeled as a system of differential equations \cite{medlock:science09,AAAI1816714,venkataramanan:ichi17}, or as stochastic
 agent based models on social contact networks, e.g., \cite{marathe:cacm13}.
 Differential equation models are small enough that they can be solved optimally by simple brute-force
 local search methods \cite{medlock:science09}.
@@ -23,7 +23,7 @@ There is a lot of relevant prior work on this topic, and can be split along the 
 \cite{PreciadoVM13_2,PreciadoVM13,PreciadoVM14,SahaSDM15,Ogura2017}. Much of this work is based on
 controlling spectral properties, but does not give any guaranteed bounds on the expected outbreak size;
 (2) Firefighter problem, which can be viewed as \prob{} on SI model with with $p=1$, e.g.,
-\cite{anshelevich09,Finbow2009TheFP}. Rigorous bounds are known for the number infected and saved.
+\cite{anshelevich09,Finbow2009TheFP}. Rigorous bounds are known for the number of infected and saved.
 However, this has not been studied much for the case where $p<1$, except \cite{DBLP:journals/corr/abs-1711-08237},
 which only gives rigorous algorithms for trees.
 A special case of this problem is with work of \cite{Aspnes:2005}, which considers \prob{} but with

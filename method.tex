@@ -3,7 +3,7 @@
 \label{sec:method}
 
 Our algorithm \algo{} uses a linear programming rounding technique, combined with the sample average approximation
-technique from stochastic optimization. We then show that this can be significantly speeded up by a more compact LP.
+technique from stochastic optimization. We then show that this can be significantly speeded up by augmenting it with a sparsification step.
 
 \subsection{Algorithm \algo{}}
 
@@ -16,9 +16,9 @@ technique from stochastic optimization. We then show that this can be significan
 %%graphs. Let $y_{vj}$ denote the indicator variable to check whether node $v$ is reachable from any source in $H_j$.
 %%As defined earlier, $x_{vt}$ is the indicator that node $v$ is vaccinated at time $t$.
 
-Figure \ref{alg:saaround} describes \algo{}. It is based on a linear program, in which the variables $x_{vt}$
+Algorithm \ref{alg:saaround} describes \algo{}. It is based on a linear program, in which the variables $x_{vt}$
 are as defined in Section \ref{sec:prelim}. The variables $y_{vj}$ are indicators for node $v$ getting infected
-in sample $H_j$ (i.e., there is a path from $\ssrc(H_j)$ to $v$).
+in sample $H_j$ (i.e., there is a path from $\ssrc(H_j)$ to $v$ with no node on it vaccinated).
 We first describe the intuition behind the algorithm, and then analyze its performance.
 
 
@@ -80,17 +80,16 @@ is the total set of vaccinated nodes.
 
 Our algorithm involves four key ideas, which are described below, along with an intuitive description of
 the steps of the algorithm.
-\begin{itemize}
-%%[leftmargin=0.1in, noitemsep, topsep=0pt]
+\begin{itemize}[leftmargin=0.1in, noitemsep, topsep=0pt]
 \item
-Sample average approximation technique: 
+\textbf{Sample average approximation technique}: 
 The first idea is that it suffices to get a solution which minimizes the average number of
 infections in a set of $M$ sampled outcomes, in order to minimize $\expinf(\cdot)$, which is an expectation
-over all possible outcomes; we show that it suffices to $M$ is bounded by a polynomial in $n$.
+over all possible outcomes; we show that it suffices that $M$ is bounded by a polynomial in $n$.
 Further, instead of actually using simulation outcomes, Steps 1 and 2 exploit an equivalence between an
 SIR process and percolation, making this much more efficient.
 \item
-Compact integer program:
+\textbf{Compact integer program}:
 The problem is challenging even if we have to minimize the average number of infections restricted to
 $H_1,\ldots,H_M$. We start with an integer program (IP) which expresses the following constraints: if a node $u$ is not infected in $H_j$
 (which is indicated by $y_{uj}=0$), then for every path $P$ from a node in $\ssrc(H_j)$ to $u$ in $H_j$, there must be
@@ -102,14 +101,14 @@ simply based on states of nodes on an edge, as expressed in constraints (\ref{eq
 This IP is an  integral version of $LP_{saa}$, with the variables required to be binary
 which we prove is equivalent.
 \item
-Linear relaxation:
+\textbf{Linear relaxation}:
 IP cannot be solved in polynomial time, and we consider a linear relaxation of it, by replacing the binary constraints
 by (\ref{eqn01}). The resulting program $LP_{saa}$ involves minimizing a linear objective over a convex polytope,
 and so step 3 of \algo{} can be done efficiently to compute the fractional solutions $x, y$.
 Also note that since $LP_{saa}$ is optimizing over a larger space (specifically, the convex hull of all the
 feasible integral solutions), the objective value in (\ref{eqn:obj}) might be smaller than the integral objective value.
 \item
-Rounding to an integral solution:
+\textbf{Rounding to an integral solution}:
 If the solution computed by $LP_{saa}$ is integral, we are done (Step 4(1)).
 However, in general solution $x$ is fractional, which poses a problem:
 if we have $x_{ut}\in(0, 1)$, e.g., a fractional value of $0.2$, it is not clear how to construct
@@ -277,7 +276,7 @@ The main bottleneck in \algo{} is the solution of $LP_{saa}$, which has:
 $nM$ variables of the form $y_{uj}$, $n|\mathcal{T}|$ variables of the form $x_{ut}$,
 and $\sum_j |E(H_j)|$ constraints (\ref{eqn1}).
 The worst case dependence of the running time of LP solvers is super-quadratic in these parameters
-(though we find the Gurobi solver scales very well in practice, as we discuss later).
+(though we find the Gurobi solver \cite{gurobi} scales very well in practice, as we discuss later).
 In order to improve the scaling of \algo{} to larger instances, we use the following methods.
 \begin{itemize}
 \item

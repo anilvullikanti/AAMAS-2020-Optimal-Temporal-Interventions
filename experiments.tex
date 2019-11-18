@@ -23,7 +23,7 @@ and the budget in each?
 We experiment with three different classes of networks (total of six),
 in order to fully explore the effect of network structure on the the results. 
 We consider two random networks, namely the small world 
-\cite{Kleinberg00thesmall-world}, and the preferential attachment \cite{Barabasi509} models. We also study the results on the CA-GrQc collaboration network \cite{Leskovec:2007:GED:1217299.1217301}, since it is a type of social network. The parameters used in generation of the random networks is presented in the full version. \cite{fullpaper}. We also consider synthetic agent based populations for Montgomery County, VA, and Portland, OR, constructed by a first principles approach by \cite{barrett:wsc09,eubank:nature04}. This has been used in several public health studies, e.g., \cite{singh:bmc19}. This network has a rich set of demographic attributes for each node, e.g., age, gender, and income.
+\cite{Kleinberg00thesmall-world}, and the preferential attachment \cite{Barabasi509} models. The parameters used in generation of the random networks is presented in the full version. \cite{sambaturu:AAAI20}. We study the results on the CA-GrQc collaboration network \cite{Leskovec:2007:GED:1217299.1217301}, since it is a type of social network. We also consider synthetic agent based populations for Montgomery County, VA, and Portland, OR, constructed by a first principles approach by \cite{barrett:wsc09,eubank:nature04}. This has been used in several public health studies, e.g., \cite{singh:bmc19}. This network has a rich set of demographic attributes for each node, e.g., age, gender, and income.
 The datasets are summarized in Table \ref{tab:datasets}.
 
 \noindent
@@ -37,7 +37,7 @@ that result when there are no interventions: we choose a probability $p_{low}$ i
 $p_{med}$ if the attack rate is in $[10\%, 20\%]$ (medium), and
 $p_{high}$ if the attack rate is $> 20\%$.
 The specific probability values depend on the datasets.
-The full version of the paper \cite{fullversion} shows how the attack rate varies with the probability, and the specific probability values which were chosen.
+The full version of the paper \cite{sambaturu:AAAI20} shows how the attack rate varies with the probability, and the specific probability values which were chosen.
 
 \begin{table}[!h]
 \centering
@@ -74,32 +74,35 @@ nodes in the order of the above scores.
 
 \subsection{Structure of solutions}
 
-LP gives almost integral solutions. In our experiments, only 15 out of 40 runs on four networks, had fractional values in the solution. 
+Very surprisingly, we find that the LP gives solutions with a lot of integral or half-integral variables, i.e., with values in $\{0, 1/2, 1\}$. 
+In fact, in 25 out of 40 instances, the LP solution was optimal! Understanding the specific problem structure leading to this property is an interesting open problem.
+
+  
 
 \subsection{Scaling}
 
 We find that \algo{} easily scales to all the networks we consider. The two strategies for speeding up have a
 significant impact on the scaling.
-\begin{itemize}
+\begin{itemize}[leftmargin=0.1in, noitemsep, topsep=0pt]
 \item
-\textbf{Number of samples needed}: we find that $O(\sqrt{n})$ samples are sufficient to get reasonable variance, as shown in Figure \ref{fig:pa_boxplot},
-instead of the worst case bound of $\Theta(n\log{n})$ from Lemma \ref{lemma:conc}.
+\textbf{Number of samples needed}: We find the number of samples  sufficient to get reasonable variance, as shown in Figure \ref{fig:pa_boxplot},
+to be less than the worst case bound of $\Theta(n\log{n})$ from Lemma \ref{lemma:conc}. We observe that the number of samples needed for convergence in some cases to be $O(\sqrt{n})$.
 The number of samples needed is lower when the transmission probability is medium or high, and when the budget is not too high,
 since this has better convergence. We note that these are typically the regimes of maximum concern in public health.
 \item
-\textbf{Impact of pruning}: the pruning of low vulnerability nodes has a very significant impact on the running time,
+\textbf{Impact of pruning}: The pruning of low vulnerability nodes has a very significant impact on the running time,
 as shown in Figure \ref{fig:pa1pruningtime}, which shows the running time with and without pruning. 
 When the number of samples used is low, the difference is negligible, but when the number of samples increases to
 the range needed for low variance, we find the difference in running times is in several orders of magnitude.
-The objective value differs by less than $5\%$ with and without pruning, as shown in Figure \ref{fig:pa1pruningobj}.
+The objective value differs by less than $5\%$ with and without pruning, as shown in Figure \ref{fig:pa1pruningobj}. Similar trend is observed in Figure \ref{fig:portlandobj}.
 This implies that our scaling strategies give good solutions on very large networks.
 \end{itemize}
  
 \begin{figure}[!h]
     \centering
-    \includegraphics[scale = 0.4]{Figuresnew/boxplotpa.png}
+    \includegraphics[scale = 0.35]{Figuresnew/boxplotpa.png}
     \caption{Number of infections over the $M$ samples (y-axis) vs $M/100$, i.e., the number of samples (in 100s) on the x-axis
-for the Preferential Attachment (PA2) network.
+for the Preferential Attachment (PA1) network.
 }
     \label{fig:pa_boxplot}
 \end{figure}
@@ -107,7 +110,7 @@ for the Preferential Attachment (PA2) network.
 
 \begin{figure}[!h]
     \centering
-    \includegraphics[scale = 0.52]{Figuresnew/pa1_runtime}
+    \includegraphics[scale = 0.5]{Figuresnew/pa1_runtime}
     \caption{Comparison of runtimes of Linear Programs with (LP-P) and without pruning (LP) on y-axis vs 
 number of samples on x-axis for the PA1 network. }
     \label{fig:pa1pruningtime}
@@ -116,7 +119,7 @@ number of samples on x-axis for the PA1 network. }
 
 \begin{figure}[!h]
     \centering
-    \includegraphics[scale = 0.52]{Figuresnew/pa1_objpruning}
+    \includegraphics[scale = 0.5]{Figuresnew/pa1_objpruning}
     \caption{Comparison of the objective values of Linear Programs with (LP-P) and without pruning (LP) on the y-axis
 vs the number of samples on the x-axis for the PA1 network. }
     \label{fig:pa1pruningobj}
@@ -124,7 +127,7 @@ vs the number of samples on the x-axis for the PA1 network. }
 
 \begin{figure}[!h]
     \centering
-    \includegraphics[scale = 0.52]{Figuresnew/portland_obj.eps}
+    \includegraphics[scale = 0.5]{Figuresnew/portland_obj.eps}
     \caption{Comparison of objective values of Linear Programs with (LP-P) and without pruning (LP) on y-axis vs 
 number of samples on x-axis for the Portland network. }
     \label{fig:portlandobj}
@@ -133,16 +136,16 @@ number of samples on x-axis for the Portland network. }
 \subsection{Performance Guarantees and comparison with baselines}
 
 \subsubsection{Comparison to baselines}
-Figures \ref{fig:performance} (a-c) show the objective value
+Figures \ref{fig:performance} (a-d) show the objective value
 for varying budgets for the \probone{} problem. We observe that \algo{} significantly outperforms
 both the baselines. For social contact networks (Fig \ref{fig:performance}) (d), which are relatively dense,
 the objective value from the eigenscore and degree baselines are over seven and three times that from
-\algo{}, over the entire budget range. \algo{} outperforms eigenscore by a similar factor in Figure \ref{fig:performance} (c) as well.
+\algo{}, respectively, over the entire budget range. \algo{} outperforms eigenscore by a similar factor in Figure \ref{fig:performance} (c) as well.
 Only in the smallest network (PA1), the differences between \algo{} and the baselines is not very high.
 It is also surprising that the degree strategy is better than eigenscore in all the networks.
 
 \subsubsection{Approximation Ratio}
-We observe that the approximation ratio with respect to the objective value is close to 1. Figures \ref{fig:performance} shows that for all four networks the objective value of LP optimal solution almost coincides with that of \algo{}. Also, the approximation ratio with respect to budget violation is close to 1, in practice, shown in Figure \ref{fig:budgetviolation}.
+We observe that the approximation ratio with respect to the objective value is close to 1. Figures \ref{fig:performance} shows that for all the four networks, the objective value of LP optimal solution almost coincides with that of \algo{}. Also, the approximation ratio with respect to budget violation is close to 1, in practice, shown in Figure \ref{fig:budgetviolation}.
 
 %\begin{figure}[!h]
     %\centering
@@ -175,27 +178,27 @@ We observe that the approximation ratio with respect to the objective value is c
 \begin{figure*}[ht] 
   \begin{minipage}[b]{0.5\linewidth}
     \centering
-    \includegraphics[scale=0.48]{Figuresnew/pa1_approx} 
+    \includegraphics[scale=0.47]{Figuresnew/pa1_approx} 
     \caption*{a. Preferential1 (PA1)} 
-    \vspace{1ex}
+    \vspace{1.1ex}
   \end{minipage}%%
   \begin{minipage}[b]{0.5\linewidth}
     \centering
-    \includegraphics[scale=0.48]{Figuresnew/smallworld_approx} 
+    \includegraphics[scale=0.47]{Figuresnew/smallworld_approx} 
     \caption*{b. Small World (SW)} 
-    \vspace{1ex}
+    \vspace{1.1ex}
   \end{minipage} 
   \begin{minipage}[b]{0.5\linewidth}
     \centering
-    \includegraphics[scale=0.48]{Figuresnew/barabasi_approx} 
+    \includegraphics[scale=0.47]{Figuresnew/barabasi_approx} 
     \caption*{c. Preferential2 (PA2)} 
-    \vspace{1ex}
+    \vspace{1.1ex}
   \end{minipage}%% 
   \begin{minipage}[b]{0.5\linewidth}
     \centering
-    \includegraphics[scale=0.48]{Figuresnew/mont_approx} 
+    \includegraphics[scale=0.47]{Figuresnew/mont_approx} 
     \caption*{d. Montgomery} 
-    \vspace{1ex}
+    \vspace{1.1ex}
   \end{minipage}
   \caption{Objective value (y-axis) vs budget (x-axis) for \algo{}, and the degree and eigenscore baselines for four networks.}
   \label{fig:performance} 
@@ -203,18 +206,18 @@ We observe that the approximation ratio with respect to the objective value is c
 
 \begin{figure}[!h]
     \centering
-    \includegraphics[scale = 0.52]{Figuresnew/budgetviolation}
+    \includegraphics[scale = 0.45]{Figuresnew/budgetviolation}
     \caption{Budget approximation ratio: the ratio of interventions after rounding to the ones before rounding. X-axis is the original budget. Y-axis is the approximation ratio.}
     \label{fig:budgetviolation}
 \end{figure}
 
 \subsection{Two stage intervention and Structure of solution}
-We study the two stage version of \prob{}. Here no information about the outbreak is available, and so, clearly, earlier is better, i.e., if the entire budget is available at time $0$, it is better to use it right away. In Figure \ref{fig:temporal}, we examine how the objective value $\expinf{}$ increases with $T$ in a two stage intervention, where $T$ is the time of the second stage. We observe that $\expinf{}$ increases very rapidly with $T$.
+We study the \probtwo{}. In Figure \ref{fig:temporal}, we examine how the objective value $\expinf{}$ increases with $T$ in a two stage intervention, where $T$ is the time of the second stage, while the first intervention is performed at time step 0. We observe that $\expinf{}$ increases very rapidly with $T$.
 
-Next, we examine the structure of the sets picked in each stage. Figure \ref{fig:montagedeg} shows a scatter plot of the node degree and age of the solution to a two stage version with $T=4$. We observe that there are slight differences between the sets $X_0$ and $X_4$: $X_0$ has slightly higher degree nodes, whereas $X_4$ has slightly lower age nodes. But more importantly, \emph{it is not the case that all high degree nodes are used in $X_0$}.
+Next, we examine the structure of the sets picked in each stage. Figure \ref{fig:montagedeg} shows a scatter plot of the node degree and age of the solution to \probtwo{} with $T=4$. We observe that there are slight differences between the sets $X_0$ and $X_4$: $X_0$ has slightly higher degree nodes, whereas $X_4$ has slightly lower age nodes. But more importantly, \emph{it is not the case that all high degree nodes are used in $X_0$}.
 \begin{figure}[!h]
     \centering
-    \includegraphics[scale = 0.55]{Figuresnew/twostage}
+    \includegraphics[scale = 0.45]{Figuresnew/twostage}
     \caption{CA-GrQc. Impact of varying $T$ in Two-stage Intervention. The X-axis corresponds to time step $T$ at which 2nd intervention is performed (1st intervention is at T =0). The Y-axis corresponds to the average number of infections over the simulations.}
     \label{fig:temporal}
 \end{figure}
@@ -222,7 +225,7 @@ Next, we examine the structure of the sets picked in each stage. Figure \ref{fig
 \begin{figure}[!h]
     \centering
     \includegraphics[scale = 0.5]{figures/t0_t4_compare_age_deg.pdf}
-    \caption{Montgomery Graph: scatter plot of age and degree of nodes of the sets $X_0$ and $X_4$ in a solution to the 2-stage \prob{} with budgets $B_1 = B_4 = 25$.}
+    \caption{Montgomery Graph: scatter plot of age and degree of nodes of the sets $X_0$ and $X_4$ in a solution to the 2-stage \prob{} with budgets $B_0 = B_4 = 25$.}
     \label{fig:montagedeg}
 \end{figure}
 
